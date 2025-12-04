@@ -1,0 +1,104 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Inventory Management</h4>
+            <p class="card-category">Manage your farm inventory items</p>
+          </div>
+          <div class="card-body">
+            <!-- Filters -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <form class="navbar-form">
+                  <div class="input-group no-border">
+                    <input type="text" 
+                           class="form-control" 
+                           placeholder="Search..."
+                           [(ngModel)]="searchTerm"
+                           name="searchTerm"
+                           (keyup)="onSearch()">
+                    <button mat-raised-button type="button" class="btn btn-white btn-round btn-just-icon">
+                      <i class="material-icons">search</i>
+                      <div class="ripple-container"></div>
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <div class="col-md-6 text-right">
+                <button mat-raised-button 
+                        class="btn btn-primary btn-round" 
+                        (click)="addItem()">
+                  <i class="material-icons">add</i> Add Item
+                </button>
+              </div>
+            </div>
+
+            <!-- Loading spinner -->
+            <div *ngIf="loading" class="text-center">
+              <mat-spinner></mat-spinner>
+            </div>
+
+            <!-- Inventory table -->
+            <div class="table-responsive" *ngIf="!loading">
+              <table class="table">
+                <thead class="text-dark">
+                  <tr>
+                    <th><strong>Name</strong></th>
+                    <th><strong>SKU</strong></th>
+                    <th><strong>Category</strong></th>
+                    <th><strong>Type</strong></th>
+                    <th><strong>Stock</strong></th>
+                    <th><strong>Avg Cost</strong></th>
+                    <th><strong>Total Value</strong></th>
+                    <th><strong>Status</strong></th>
+                    <th class="text-right"><strong>Actions</strong></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of filteredItems">
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.sku || '-' }}</td>
+                    <td>{{ item.categoryName }}</td>
+                    <td>{{ item.typeName }}</td>
+                    <td>
+                      <span [class.text-danger]="isLowStock(item)">
+                        {{ item.totalStock }}
+                      </span>
+                    </td>
+                    <td>{{ item.averageUnitCost ? ('R' + (item.averageUnitCost | number:'1.2-2')) : 'R0.00' }}</td>
+                    <td>{{ item.totalStockValue ? ('R' + (item.totalStockValue | number:'1.2-2')) : 'R0.00' }}</td>
+                    <td>
+                      <span *ngIf="isLowStock(item)" class="badge badge-warning">Low Stock</span>
+                      <span *ngIf="!isLowStock(item)" class="badge badge-success">In Stock</span>
+                    </td>
+                    <td class="td-actions text-right">
+                      <button mat-icon-button 
+                              matTooltip="Edit"
+                              class="btn btn-info btn-link btn-sm"
+                              (click)="editItem(item.id)">
+                        <i class="material-icons">edit</i>
+                      </button>
+                      <button mat-icon-button 
+                              matTooltip="Delete"
+                              class="btn btn-danger btn-link btn-sm"
+                              (click)="deleteItem(item.id)">
+                        <i class="material-icons">close</i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="filteredItems.length === 0">
+                    <td colspan="7" class="text-center">
+                      <p class="text-muted">No items found</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

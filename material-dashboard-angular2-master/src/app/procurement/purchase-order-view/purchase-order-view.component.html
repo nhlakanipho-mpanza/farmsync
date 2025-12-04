@@ -1,0 +1,144 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div *ngIf="loading" class="text-center">
+                    <mat-spinner></mat-spinner>
+                </div>
+
+                <div *ngIf="!loading && purchaseOrder">
+                    <!-- Header Card -->
+                    <div class="card">
+                        <div class="card-header card-header-primary">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4 class="card-title mb-0">Purchase Order: {{ purchaseOrder.poNumber }}</h4>
+                                    <p class="card-category mb-0">
+                                        <span class="badge badge-{{ getStatusColor(purchaseOrder.status) }}">
+                                            {{ purchaseOrder.status }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div>
+                                    <button mat-raised-button (click)="goBack()" class="btn btn-white btn-round">
+                                        <mat-icon>arrow_back</mat-icon>
+                                        Back
+                                    </button>
+                                    <button mat-raised-button color="primary" (click)="receiveGoods()"
+                                        class="btn btn-info btn-round"
+                                        *ngIf="purchaseOrder.status === 'Created' || purchaseOrder.status === 'Approved' || purchaseOrder.status === 'PartiallyReceived'">
+                                        <mat-icon>local_shipping</mat-icon>
+                                        Receive Goods
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5><strong>Supplier Information</strong></h5>
+                                    <p><strong>Name:</strong> {{ purchaseOrder.supplierName }}</p>
+                                    <p><strong>Order Date:</strong> {{ purchaseOrder.orderDate | date: 'dd/MM/yyyy' }}
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5><strong>Order Details</strong></h5>
+
+                                    <p><strong>Expected Delivery:</strong> {{ purchaseOrder.expectedDeliveryDate ?
+                                        (purchaseOrder.expectedDeliveryDate | date: 'dd/MM/yyyy') : 'Not specified' }}
+                                    </p>
+                                    <p><strong>Total Amount:</strong> R {{ purchaseOrder.totalAmount | number: '1.2-2'
+                                        }}</p>
+                                </div>
+                            </div>
+                            <div class="row mt-3" *ngIf="purchaseOrder.notes">
+                                <div class="col-md-12">
+                                    <h5>Notes</h5>
+                                    <p>{{ purchaseOrder.notes }}</p>
+                                </div>
+                            </div>
+
+                            <hr>
+                            <h4 class="card-title"><strong>Order Items</strong></h4>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="text-primary">
+                                        <tr>
+                                            <th><strong>Item</strong></th>
+                                            <th><strong>Description</strong></th>
+                                            <th class="text-right"><strong>Ordered Qty</strong></th>
+                                            <th class="text-right"><strong>Received Qty</strong></th>
+                                            <th class="text-right"><strong>Unit Price</strong></th>
+                                            <th class="text-right"><strong>Total</strong></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of purchaseOrder.items">
+                                            <td>{{ item.itemName }}</td>
+                                            <td>{{ item.description || '-' }}</td>
+                                            <td class="text-right">{{ item.orderedQuantity }}</td>
+                                            <td class="text-right">{{ item.receivedQuantity || 0 }}</td>
+                                            <td class="text-right">R {{ item.unitPrice | number: '1.2-2' }}</td>
+                                            <td class="text-right">R {{ (item.orderedQuantity * item.unitPrice) |
+                                                number: '1.2-2' }}</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="5" class="text-right"><strong>Total:</strong></td>
+                                            <td class="text-right"><strong>R {{ purchaseOrder.totalAmount | number:
+                                                    '1.2-2' }}</strong></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="table-responsive"
+                                *ngIf="purchaseOrder.goodsReceivedRecords && purchaseOrder.goodsReceivedRecords.length > 0">
+                                <hr>
+                                <h4 class="card-title">Goods Received Records</h4>
+                                <table class="table table-hover">
+                                    <thead class="text-primary">
+                                        <tr>
+                                            <th>Receipt Number</th>
+                                            <th>Received Date</th>
+                                            <th>Status</th>
+                                            <th>Has Discrepancies</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let gr of purchaseOrder.goodsReceivedRecords">
+                                            <td>{{ gr.receiptNumber }}</td>
+                                            <td>{{ gr.receivedDate | date: 'dd/MM/yyyy' }}</td>
+                                            <td>
+                                                <span
+                                                    class="badge badge-{{ gr.status === 'Approved' ? 'success' : 'warning' }}">
+                                                    {{ gr.status }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span
+                                                    class="badge badge-{{ gr.hasDiscrepancies ? 'warning' : 'success' }}">
+                                                    {{ gr.hasDiscrepancies ? 'Yes' : 'No' }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button mat-icon-button color="primary"
+                                                    [routerLink]="['/procurement/goods-received/view', gr.id]"
+                                                    matTooltip="View Details">
+                                                    <mat-icon>visibility</mat-icon>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

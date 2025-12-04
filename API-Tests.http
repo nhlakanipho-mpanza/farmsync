@@ -1,0 +1,155 @@
+### FarmSync API Tests - Complete Flow
+
+@baseUrl = http://localhost:5201/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YWY1MTE1Yy01ZWQ0LTQ5ZWItYTdjNC00YzdiZDZjZWUwNGQiLCJ1bmlxdWVfbmFtZSI6ImFkbWluIiwianRpIjoiMGRmODBmMTQtMjMzNC00MGZiLWIxYjktNTBkN2RlYjBiMzNjIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjQ4NDI1NzQsImlzcyI6IkZhcm1TeW5jQVBJIiwiYXVkIjoiRmFybVN5bmNDbGllbnQifQ.mmOy-tT-yXXJ3VhTuQLL3RGAerJEmGsqUeSrdGS6uLY
+
+### ====== AUTHENTICATION TESTS ======
+
+### 1. Login as admin (Get fresh token)
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "Admin@123"
+}
+
+### 2. Register a new user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "farmmanager",
+  "email": "manager@farmsync.com",
+  "password": "Manager@123",
+  "firstName": "Farm",
+  "lastName": "Manager"
+}
+
+### ====== INVENTORY TESTS ======
+
+### 3. Get all inventory items (should be empty initially)
+GET {{baseUrl}}/inventoryitems
+Authorization: Bearer {{token}}
+
+### 4. Get reference data - We need IDs for creating items
+# First, let's check what we have in the database by querying directly
+# You'll need to get the IDs from Swagger or database
+
+### 5. Create first inventory item - Corn Seeds
+# @name createCornSeeds
+POST {{baseUrl}}/inventoryitems
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Premium Corn Seeds",
+  "description": "High-yield hybrid corn seeds suitable for all soil types",
+  "sku": "SEED-CORN-001",
+  "categoryId": "{{$guid}}",
+  "typeId": "{{$guid}}",
+  "unitOfMeasureId": "{{$guid}}",
+  "minimumStockLevel": 50,
+  "reorderLevel": 100,
+  "unitPrice": 25.50
+}
+
+### 6. Create second inventory item - Fertilizer
+POST {{baseUrl}}/inventoryitems
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "NPK Fertilizer 20-20-20",
+  "description": "Balanced NPK fertilizer for general crop nutrition",
+  "sku": "FERT-NPK-001",
+  "categoryId": "{{$guid}}",
+  "typeId": "{{$guid}}",
+  "unitOfMeasureId": "{{$guid}}",
+  "minimumStockLevel": 100,
+  "reorderLevel": 200,
+  "unitPrice": 45.00
+}
+
+### 7. Create third inventory item - Hand Tools
+POST {{baseUrl}}/inventoryitems
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Garden Hoe",
+  "description": "Heavy-duty steel garden hoe with wooden handle",
+  "sku": "TOOL-HOE-001",
+  "categoryId": "{{$guid}}",
+  "typeId": "{{$guid}}",
+  "unitOfMeasureId": "{{$guid}}",
+  "minimumStockLevel": 10,
+  "reorderLevel": 20,
+  "unitPrice": 35.00
+}
+
+### 8. Get all inventory items again (should have items now)
+GET {{baseUrl}}/inventoryitems
+Authorization: Bearer {{token}}
+
+### 9. Get low stock items
+GET {{baseUrl}}/inventoryitems/low-stock
+Authorization: Bearer {{token}}
+
+### 10. Get specific item by ID (replace with actual ID from create response)
+GET {{baseUrl}}/inventoryitems/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### 11. Update inventory item (replace IDs with actual values)
+PUT {{baseUrl}}/inventoryitems/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": "REPLACE_WITH_ACTUAL_ID",
+  "name": "Premium Corn Seeds - Updated",
+  "description": "Premium high-yield hybrid corn seeds - Updated description",
+  "sku": "SEED-CORN-001",
+  "categoryId": "REPLACE_WITH_CATEGORY_ID",
+  "typeId": "REPLACE_WITH_TYPE_ID",
+  "unitOfMeasureId": "REPLACE_WITH_UOM_ID",
+  "minimumStockLevel": 60,
+  "reorderLevel": 120,
+  "unitPrice": 27.50,
+  "isActive": true
+}
+
+### 12. Delete inventory item (replace with actual ID)
+DELETE {{baseUrl}}/inventoryitems/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### ====== NEGATIVE TESTS ======
+
+### 13. Try to access protected endpoint without token (should fail with 401)
+GET {{baseUrl}}/inventoryitems
+
+### 14. Try to access with invalid token (should fail with 401)
+GET {{baseUrl}}/inventoryitems
+Authorization: Bearer invalid_token_here
+
+### 15. Try to login with wrong password (should fail with 401)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "WrongPassword"
+}
+
+### 16. Try to register duplicate user (should fail)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "email": "duplicate@farmsync.com",
+  "password": "Test@123",
+  "firstName": "Test",
+  "lastName": "User"
+}

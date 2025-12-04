@@ -1,0 +1,49 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]uild/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# Entity Framework
+Migrations/
+
+# Angular
+material-dashboard-angular2-master/node_modules/
+material-dashboard-angular2-master/dist/
+material-dashboard-angular2-master/.angular/
+material-dashboard-angular2-master/package-lock.json
+
+material-dashboard-react-main/node_modules/
+material-dashboard-react-main/build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archives
+*.zip
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

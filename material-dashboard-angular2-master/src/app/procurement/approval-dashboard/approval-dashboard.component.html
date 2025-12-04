@@ -1,0 +1,152 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Pending Approvals</h4>
+            <p class="card-category">Review and approve purchase orders and goods receipts</p>
+          </div>
+          <div class="card-body">
+            <div *ngIf="loading" class="loading-container">
+              <mat-spinner></mat-spinner>
+            </div>
+
+            <mat-tab-group *ngIf="!loading">
+              <!-- Purchase Orders Tab -->
+              <mat-tab>
+                <ng-template mat-tab-label>
+                  <mat-icon class="tab-icon">shopping_cart</mat-icon>
+                  Purchase Orders ({{ pendingPurchaseOrders.length }})
+                </ng-template>
+                
+                <div class="tab-content">
+                  <div *ngIf="pendingPurchaseOrders.length === 0" class="alert alert-info">
+                    No purchase orders pending approval.
+                  </div>
+
+                  <div *ngIf="pendingPurchaseOrders.length > 0" class="table-responsive">
+                    <table mat-table [dataSource]="pendingPurchaseOrders" class="table">
+                      <ng-container matColumnDef="poNumber">
+                        <th mat-header-cell *matHeaderCellDef><strong>PO Number</strong></th>
+                        <td mat-cell *matCellDef="let po">{{ po.poNumber }}</td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="supplier">
+                        <th mat-header-cell *matHeaderCellDef><strong>Supplier</strong></th>
+                        <td mat-cell *matCellDef="let po">{{ po.supplierName }}</td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="orderDate">
+                        <th mat-header-cell *matHeaderCellDef><strong>Order Date</strong></th>
+                        <td mat-cell *matCellDef="let po">{{ po.orderDate | date: 'short' }}</td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="totalAmount">
+                        <th mat-header-cell *matHeaderCellDef><strong>Total Amount</strong></th>
+                        <td mat-cell *matCellDef="let po">{{ po.totalAmount | currency }}</td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef class="text-center"><strong>Actions</strong></th>
+                        <td mat-cell *matCellDef="let po" class="td-actions text-center">
+                          <button mat-icon-button 
+                                  matTooltip="View Details"
+                                  class="btn btn-info btn-link p-2"
+                                  (click)="viewPurchaseOrder(po.id)">
+                            <i class="material-icons">visibility</i>
+                          </button>
+                          <button mat-raised-button 
+                                  matTooltip="Approve"
+                                  class="btn btn-round btn-info"
+                                  (click)="approvePurchaseOrder(po.id)">
+                            <i class="material-icons">check_circle</i> Approve
+                          </button>
+                        </td>
+                      </ng-container>
+
+                      <tr mat-header-row *matHeaderRowDef="poDisplayedColumns"></tr>
+                      <tr mat-row *matRowDef="let row; columns: poDisplayedColumns;"></tr>
+                    </table>
+                  </div>
+                </div>
+              </mat-tab>
+
+              <!-- Goods Receipts Tab -->
+              <mat-tab>
+                <ng-template mat-tab-label>
+                  <mat-icon class="tab-icon">local_shipping</mat-icon>
+                  Goods Receipts ({{ pendingGoodsReceipts.length }})
+                </ng-template>
+                
+                <div class="tab-content">
+                  <div *ngIf="pendingGoodsReceipts.length === 0" class="alert alert-info">
+                    No goods receipts pending approval.
+                  </div>
+
+                  <div *ngIf="pendingGoodsReceipts.length > 0" class="table-responsive">
+                    <table mat-table [dataSource]="pendingGoodsReceipts" class="table">
+                      <ng-container matColumnDef="poNumber">
+                        <th mat-header-cell *matHeaderCellDef><strong>PO Number</strong></th>
+                        <td mat-cell *matCellDef="let gr">{{ gr.poNumber }}</td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="supplier">
+                        <th mat-header-cell *matHeaderCellDef><strong>Received By</strong></th>
+                        <td mat-cell *matCellDef="let gr">{{ gr.receivedBy }}</td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="receivedDate">
+                        <th mat-header-cell *matHeaderCellDef>Received Date</th>
+                        <td mat-cell *matCellDef="let gr">{{ gr.receivedDate | date: 'short' }}</td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="hasDiscrepancies">
+                        <th mat-header-cell *matHeaderCellDef><strong>Discrepancies</strong></th>
+                        <td mat-cell *matCellDef="let gr">
+                          <span *ngIf="gr.hasDiscrepancies" class="badge badge-info">
+                            Yes
+                          </span>
+                          <span *ngIf="!gr.hasDiscrepancies" class="badge badge-success">
+                            No
+                          </span>
+                        </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef class="text-center"><strong>Actions</strong></th>
+                        <td mat-cell *matCellDef="let gr" class="td-actions text-center">
+                          <button mat-icon-button 
+                                  matTooltip="View Details"
+                                  class="btn btn-info btn-link btn-sm"
+                                  (click)="viewGoodsReceipt(gr.id)">
+                            <i class="material-icons">visibility</i>
+                          </button>
+                          <button mat-raised-button 
+                                  matTooltip="Approve"
+                                  class="btn btn-round btn-info"
+                                  (click)="approveGoodsReceipt(gr.id)">
+                            <i class="material-icons">check_circle</i> Approve
+                          </button>
+                          <button mat-raised-button 
+                                  matTooltip="Reject"
+                                  class="btn btn-round btn-danger"
+                                  (click)="rejectGoodsReceipt(gr.id)">
+                            <i class="material-icons">cancel</i> Reject
+                          </button>
+                        </td>
+                      </ng-container>
+
+                      <tr mat-header-row *matHeaderRowDef="grDisplayedColumns"></tr>
+                      <tr mat-row *matRowDef="let row; columns: grDisplayedColumns;"></tr>
+                    </table>
+                  </div>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

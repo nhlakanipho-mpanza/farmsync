@@ -1,0 +1,117 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Purchase Orders</h4>
+            <p class="card-category">Manage purchase orders and approvals</p>
+          </div>
+          <div class="card-body">
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <form class="navbar-form">
+                  <div class="input-group no-border">
+                    <input type="text" 
+                           class="form-control" 
+                           placeholder="Search by PO number, supplier..."
+                           [(ngModel)]="searchTerm"
+                           name="searchTerm"
+                           (keyup)="onSearch()">
+                    <button mat-raised-button 
+                            type="button" 
+                            class="btn btn-white btn-round btn-just-icon">
+                      <i class="material-icons">search</i>
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <div class="col-md-4">
+                <mat-form-field class="w-100">
+                  <mat-label>Filter by Status</mat-label>
+                  <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusChange()">
+                    <mat-option *ngFor="let status of statuses" [value]="status">
+                      {{ status }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col-md-4 text-right">
+                <button class="btn btn-primary btn-round" (click)="createNew()">
+                  <i class="material-icons">add</i> New Purchase Order
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="loading" class="text-center">
+              <mat-spinner></mat-spinner>
+            </div>
+
+            <div *ngIf="!loading && filteredPurchaseOrders.length === 0" class="alert alert-info">
+              No purchase orders found.
+            </div>
+
+            <div *ngIf="!loading && filteredPurchaseOrders.length > 0" class="table-responsive">
+              <table class="table table-hover">
+                <thead class="text-primary">
+                  <tr>
+                    <th><strong>PO Number</strong></th>
+                    <th><strong>Supplier</strong></th>
+                    <th><strong>Order Date</strong></th>
+                    <th><strong>Expected Delivery</strong></th>
+                    <th><strong>Status</strong></th>
+                    <th><strong>Total Amount</strong></th>
+                    <th class="text-center"><strong>Actions</strong></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let po of filteredPurchaseOrders">
+                    <td>{{ po.poNumber }}</td>
+                    <td>{{ po.supplierName }}</td>
+                    <td>{{ po.orderDate | date: 'dd/MM/yyyy' }}</td>
+                    <td>{{ po.expectedDeliveryDate ? (po.expectedDeliveryDate | date: 'dd/MM/yyyy') : '-' }}</td>
+                    <td>
+                      <span class="badge badge-{{ getStatusColor(po.status) }}">
+                        {{ po.status }}
+                      </span>
+                    </td>
+                    <td>R {{ po.totalAmount | number: '1.2-2' }}</td>
+                    <td class="td-actions text-right">
+                      <button mat-icon-button 
+                              matTooltip="View Details"
+                              class="btn btn-info btn-link btn-sm"
+                              (click)="viewDetails(po.id)">
+                        <i class="material-icons">visibility</i>
+                      </button>
+                      <button mat-icon-button 
+                              matTooltip="Edit"
+                              class="btn btn-info btn-link btn-sm"
+                              *ngIf="po.status === 'Created'"
+                              (click)="editPurchaseOrder(po.id)">
+                        <i class="material-icons">edit</i>
+                      </button>
+                      <button mat-icon-button 
+                              matTooltip="Approve"
+                              class="btn btn-success btn-link btn-sm"
+                              *ngIf="po.status === 'Created'"
+                              (click)="approvePurchaseOrder(po.id)">
+                        <i class="material-icons">check_circle</i>
+                      </button>
+                      <button mat-icon-button 
+                              matTooltip="Delete"
+                              class="btn btn-danger btn-link btn-sm"
+                              *ngIf="po.status === 'Created'"
+                              (click)="deletePurchaseOrder(po.id)">
+                        <i class="material-icons">close</i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

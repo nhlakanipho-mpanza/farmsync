@@ -1,0 +1,87 @@
+### FarmSync API Tests
+
+# Variables
+@baseUrl = http://localhost:5201/api
+@token = 
+
+### 1. Register a new user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "test@farmsync.com",
+  "password": "Test@123",
+  "firstName": "Test",
+  "lastName": "User"
+}
+
+### 2. Login as admin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "Admin@123"
+}
+
+### 3. Login as test user
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "Test@123"
+}
+
+### 4. Get all inventory items (requires authentication)
+GET {{baseUrl}}/inventoryitems
+Authorization: Bearer {{token}}
+
+### 5. Get low stock items
+GET {{baseUrl}}/inventoryitems/low-stock
+Authorization: Bearer {{token}}
+
+### 6. Create inventory item
+POST {{baseUrl}}/inventoryitems
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Corn Seeds",
+  "description": "High-yield corn seeds",
+  "sku": "SEED-CORN-001",
+  "categoryId": "REPLACE_WITH_CATEGORY_ID",
+  "typeId": "REPLACE_WITH_TYPE_ID",
+  "unitOfMeasureId": "REPLACE_WITH_UOM_ID",
+  "minimumStockLevel": 50,
+  "reorderLevel": 100,
+  "unitPrice": 25.50
+}
+
+### 7. Get specific inventory item by ID
+GET {{baseUrl}}/inventoryitems/{id}
+Authorization: Bearer {{token}}
+
+### 8. Update inventory item
+PUT {{baseUrl}}/inventoryitems/{id}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": "REPLACE_WITH_ITEM_ID",
+  "name": "Corn Seeds - Updated",
+  "description": "Premium high-yield corn seeds",
+  "sku": "SEED-CORN-001",
+  "categoryId": "REPLACE_WITH_CATEGORY_ID",
+  "typeId": "REPLACE_WITH_TYPE_ID",
+  "unitOfMeasureId": "REPLACE_WITH_UOM_ID",
+  "minimumStockLevel": 60,
+  "reorderLevel": 120,
+  "unitPrice": 27.50,
+  "isActive": true
+}
+
+### 9. Delete inventory item
+DELETE {{baseUrl}}/inventoryitems/{id}
+Authorization: Bearer {{token}}

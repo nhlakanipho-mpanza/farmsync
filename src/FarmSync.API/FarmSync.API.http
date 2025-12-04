@@ -1,0 +1,6 @@
+@FarmSync.API_HostAddress = http://localhost:5201
+
+GET {{FarmSync.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

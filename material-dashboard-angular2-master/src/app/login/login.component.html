@@ -1,0 +1,85 @@
+<div class="wrapper wrapper-full-page" style="min-height: 100vh; display: flex; flex-direction: column; position: relative;">
+  <!-- Background header - 30vh height with image contained within -->
+  <div class="page-header login-page header-filter" 
+       style="position: absolute; top: 0; left: 0; right: 0; height: 38vh; min-height: 38vh; max-height: 38vh; background-image: url('https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80'); background-size: cover; background-position: top center; z-index: 0; overflow: hidden;">
+  </div>
+  
+  <!-- Form container - centered vertically and horizontally -->
+  <div class="container" style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative; z-index: 1; padding: 20px 0;">
+    <div class="row" style="width: 100%;">
+      <div class="col-lg-5 col-md-5 col-sm-8 ml-auto mr-auto">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="card card-login">
+            <div class="card-header card-header-primary text-center">
+              <h4 class="card-title">FarmSync</h4>
+              <div class="social-line">
+                <p class="description">Enter your credentials to access the dashboard</p>
+              </div>
+            </div>
+            <div class="card-body">
+              
+              
+              <div class="form-group">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <i class="material-icons">person</i>
+                    </span>
+                  </div>
+                  <input type="text" 
+                         class="form-control" 
+                         placeholder="Username"
+                         formControlName="username"
+                         [class.is-invalid]="f.username.invalid && f.username.touched">
+                </div>
+                <small class="text-danger" *ngIf="f.username.invalid && f.username.touched">
+                  Username is required
+                </small>
+              </div>
+
+              <div class="form-group">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <i class="material-icons">lock_outline</i>
+                    </span>
+                  </div>
+                  <input type="password" 
+                         class="form-control" 
+                         placeholder="Password"
+                         formControlName="password"
+                         [class.is-invalid]="f.password.invalid && f.password.touched">
+                </div>
+                <small class="text-danger" *ngIf="f.password.invalid && f.password.touched">
+                  Password is required
+                </small>
+              </div>
+            </div>
+            <div class="card-footer justify-content-center">
+              <button type="submit" 
+                      class="btn btn-primary btn-round" 
+                      [disabled]="loading || loginForm.invalid">
+                <span *ngIf="!loading">Login</span>
+                <span *ngIf="loading">
+                  <i class="fa fa-spinner fa-spin"></i> Logging in...
+                </span>
+              </button>
+            </div>
+          </div>
+        </form>
+        <div *ngIf="error" class="alert alert-danger">
+                  {{ error }}
+                </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Footer at the bottom -->
+  <footer class="footer" style="position: relative; z-index: 1; margin-top: auto;">
+    <div class="container">
+      <div class="copyright text-center">
+        &copy; {{ currentYear }} FarmSync - Farm Management System
+      </div>
+    </div>
+  </footer>
+</div>

@@ -1,0 +1,96 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Suppliers</h4>
+            <p class="card-category">Manage supplier information</p>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <form class="navbar-form">
+                  <div class="input-group no-border">
+                    <input type="text" 
+                           class="form-control" 
+                           placeholder="Search..."
+                           [(ngModel)]="searchTerm"
+                           name="searchTerm"
+                           (keyup)="onSearch()">
+                    <button mat-raised-button type="button" class="btn btn-white btn-round btn-just-icon">
+                      <i class="material-icons">search</i>
+                      <div class="ripple-container"></div>
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <div class="col-md-6 text-right">
+                <button mat-raised-button class="btn btn-primary btn-round" (click)="createNew()">
+                  <mat-icon>add</mat-icon> Add Supplier
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="loading" class="loading-container">
+              <mat-spinner></mat-spinner>
+            </div>
+
+            <div *ngIf="!loading && filteredSuppliers.length === 0" class="alert alert-info">
+              No suppliers found. Click "Add Supplier" to create one.
+            </div>
+
+            <div *ngIf="!loading && filteredSuppliers.length > 0" class="table-responsive">
+              <table mat-table [dataSource]="filteredSuppliers" class="table">
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef><strong>Supplier Name</strong></th>
+                  <td mat-cell *matCellDef="let supplier">{{ supplier.name }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="contactPerson">
+                  <th mat-header-cell *matHeaderCellDef><strong>Contact Person</strong></th>
+                  <td mat-cell *matCellDef="let supplier">{{ supplier.contactPerson }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="email">
+                  <th mat-header-cell *matHeaderCellDef><strong>Email</strong></th>
+                  <td mat-cell *matCellDef="let supplier">{{ supplier.email }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="phone">
+                  <th mat-header-cell *matHeaderCellDef><strong>Phone</strong></th>
+                  <td mat-cell *matCellDef="let supplier">{{ supplier.phone }}</td>
+                </ng-container>
+
+            <ng-container matColumnDef="isActive">
+              <th mat-header-cell *matHeaderCellDef><strong>Status</strong></th>
+              <td mat-cell *matCellDef="let supplier">
+                <span *ngIf="supplier.isActive" class="badge badge-success">Active</span>
+                <span *ngIf="!supplier.isActive" class="badge badge-warning">Inactive</span>
+              </td>
+            </ng-container>            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef><strong>Actions</strong></th>
+              <td mat-cell *matCellDef="let supplier" class="td-actions text-right">
+                <button mat-icon-button 
+                        matTooltip="Edit"
+                        class="btn btn-info btn-link btn-sm"
+                        (click)="editSupplier(supplier.id)">
+                  <i class="material-icons">edit</i>
+                </button>
+                <button mat-icon-button 
+                        matTooltip="Delete"
+                        class="btn btn-danger btn-link btn-sm"
+                        (click)="deleteSupplier(supplier.id, supplier.name)">
+                  <i class="material-icons">close</i>
+                </button>
+              </td>
+            </ng-container>                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

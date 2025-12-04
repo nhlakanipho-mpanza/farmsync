@@ -1,0 +1,31 @@
+.item-row {
+  border: 1px solid #e0e0e0;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.info-item {
+  padding: 15px 0;
+  font-size: 14px;
+}
+
+.ml-2 {
+  margin-left: 10px;
+}
+
+.alert {
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+}

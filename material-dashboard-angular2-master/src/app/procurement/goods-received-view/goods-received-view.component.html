@@ -1,0 +1,122 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div *ngIf="loading" class="text-center">
+                    <mat-spinner></mat-spinner>
+                </div>
+
+                <div *ngIf="!loading && goodsReceived">
+                    <!-- Header Card -->
+                    <div class="card">
+                        <div class="card-header card-header-primary">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4 class="card-title mb-0">Goods Received: {{ goodsReceived.receiptNumber }}</h4>
+                                    <p class="card-category mb-0">
+                                        <span class="badge badge-{{ getStatusColor(goodsReceived.status) }}">
+                                            {{ goodsReceived.status }}
+                                        </span>
+                                        <span
+                                            class="badge badge-{{ goodsReceived.hasDiscrepancies ? 'info' : 'success' }}"
+                                            class="ml-2">
+                                            {{ goodsReceived.hasDiscrepancies ? 'Has Discrepancies' : 'No Discrepancies'
+                                            }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div>
+                                    <button mat-raised-button (click)="goBack()" class="btn btn-white btn-round">
+                                        <mat-icon>arrow_back</mat-icon>
+                                        Back
+                                    </button>
+                                    <button mat-raised-button class="btn btn-info btn-round" (click)="approveReceipt()"
+                                        [disabled]="approving || goodsReceived.status === 'Approved'"
+                                        *ngIf="goodsReceived.status === 'Pending'">
+                                        <mat-icon>check_circle</mat-icon>
+                                        {{ approving ? 'Approving...' : 'Approve Receipt' }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5><strong>Receipt Information</strong></h5>
+                                    <p><strong>Receipt Number:</strong> {{ goodsReceived.receiptNumber }}</p>
+                                    <p><strong>Received Date:</strong> {{ goodsReceived.receivedDate | date: 'dd/MM/yyyy
+                                        HH:mm' }}</p>
+                                    <p><strong>Purchase Order:</strong> {{ goodsReceived.purchaseOrderNumber }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5><strong>Status</strong></h5>
+                                    <p><strong>Status:</strong> {{ goodsReceived.status }}</p>
+                                    <p><strong>Approved At:</strong> {{ goodsReceived.approvedAt ?
+                                        (goodsReceived.approvedAt | date: 'dd/MM/yyyy HH:mm') : 'Not yet approved' }}
+                                    </p>
+                                    <p><strong>Final Receipt:</strong> {{ goodsReceived.isFinalReceipt ? 'Yes' : 'No' }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row mt-3" *ngIf="goodsReceived.discrepancyNotes">
+                                <div class="col-md-12">
+                                    <h5><strong>Discrepancy Notes</strong></h5>
+                                    <div class="alert alert-warning">
+                                        {{ goodsReceived.discrepancyNotes }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+                            <div class="table-responsive">
+                                <h4 class="card-title"><strong>Received Items</strong></h4>
+                                <table class="table table-hover">
+                                    <thead class="text-primary">
+                                        <tr>
+                                            <th>Item</th>
+                                            <th class="text-right">Ordered</th>
+                                            <th class="text-right">Received</th>
+                                            <th class="text-right">Damaged</th>
+                                            <th class="text-right">Shortfall</th>
+                                            <th>Condition</th>
+                                            <th>Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of goodsReceived.items">
+                                            <td>{{ item.itemName }}</td>
+                                            <td class="text-right">{{ item.orderedQuantity }}</td>
+                                            <td class="text-right">
+                                                <span
+                                                    [class.text-warning]="item.quantityReceived < item.orderedQuantity">
+                                                    {{ item.quantityReceived }}
+                                                </span>
+                                            </td>
+                                            <td class="text-right">
+                                                <span [class.text-danger]="item.quantityDamaged > 0">
+                                                    {{ item.quantityDamaged }}
+                                                </span>
+                                            </td>
+                                            <td class="text-right">
+                                                <span [class.text-warning]="item.quantityShortfall > 0">
+                                                    {{ item.quantityShortfall }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span
+                                                    class="badge badge-{{ item.condition === 'Good' ? 'success' : 'warning' }}">
+                                                    {{ item.condition }}
+                                                </span>
+                                            </td>
+                                            <td>{{ item.notes || '-' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
