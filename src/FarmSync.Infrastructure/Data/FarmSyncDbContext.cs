@@ -3,6 +3,8 @@ using FarmSync.Domain.Entities.Auth;
 using FarmSync.Domain.Entities.Inventory;
 using FarmSync.Domain.Entities.ReferenceData;
 using FarmSync.Domain.Entities.Procurement;
+using FarmSync.Domain.Entities.HR;
+using FarmSync.Domain.Entities.Fleet;
 
 namespace FarmSync.Infrastructure.Data;
 
@@ -38,7 +40,55 @@ public class FarmSyncDbContext : DbContext
     public DbSet<UnitOfMeasure> UnitsOfMeasure => Set<UnitOfMeasure>();
     public DbSet<TransactionStatus> TransactionStatuses => Set<TransactionStatus>();
     public DbSet<EquipmentCondition> EquipmentConditions => Set<EquipmentCondition>();
-    public DbSet<MaintenanceType> MaintenanceTypes => Set<MaintenanceType>();
+    public DbSet<FarmSync.Domain.Entities.ReferenceData.MaintenanceType> MaintenanceTypes => Set<FarmSync.Domain.Entities.ReferenceData.MaintenanceType>();
+
+    // HR - Employees
+    public DbSet<Employee> Employees => Set<Employee>();
+    public DbSet<Position> Positions => Set<Position>();
+    public DbSet<EmergencyContact> EmergencyContacts => Set<EmergencyContact>();
+    public DbSet<BankDetails> BankDetails => Set<BankDetails>();
+    public DbSet<BiometricEnrolment> BiometricEnrolments => Set<BiometricEnrolment>();
+
+    // HR - Teams & Tasks
+    public DbSet<Team> Teams => Set<Team>();
+    public DbSet<TeamMember> TeamMembers => Set<TeamMember>();
+    public DbSet<WorkArea> WorkAreas => Set<WorkArea>();
+    public DbSet<WorkTask> WorkTasks => Set<WorkTask>();
+    public DbSet<ClockEvent> ClockEvents => Set<ClockEvent>();
+
+    // HR - Issuing
+    public DbSet<InventoryIssue> InventoryIssues => Set<InventoryIssue>();
+    public DbSet<EquipmentIssue> EquipmentIssues => Set<EquipmentIssue>();
+
+    // HR - Reference Data
+    public DbSet<EmploymentType> EmploymentTypes => Set<EmploymentType>();
+    public DbSet<RoleType> RoleTypes => Set<RoleType>();
+    public DbSet<TeamType> TeamTypes => Set<TeamType>();
+    public DbSet<BankName> BankNames => Set<BankName>();
+    public DbSet<AccountType> AccountTypes => Set<AccountType>();
+    public DbSet<Domain.Entities.HR.TaskStatus> TaskStatuses => Set<Domain.Entities.HR.TaskStatus>();
+    public DbSet<IssueStatus> IssueStatuses => Set<IssueStatus>();
+
+    // Fleet - Vehicles
+    public DbSet<Vehicle> Vehicles => Set<Vehicle>();
+    public DbSet<VehicleType> VehicleTypes => Set<VehicleType>();
+    public DbSet<VehicleStatus> VehicleStatuses => Set<VehicleStatus>();
+    public DbSet<FuelType> FuelTypes => Set<FuelType>();
+    public DbSet<DriverAssignment> DriverAssignments => Set<DriverAssignment>();
+
+    // Fleet - Operations
+    public DbSet<TripLog> TripLogs => Set<TripLog>();
+    public DbSet<GPSLocation> GPSLocations => Set<GPSLocation>();
+    public DbSet<TransportTask> TransportTasks => Set<TransportTask>();
+    public DbSet<Domain.Entities.Fleet.TaskStatus> FleetTaskStatuses => Set<Domain.Entities.Fleet.TaskStatus>();
+    public DbSet<Geofence> Geofences => Set<Geofence>();
+    public DbSet<SpeedingEvent> SpeedingEvents => Set<SpeedingEvent>();
+
+    // Fleet - Maintenance & Fuel
+    public DbSet<MaintenanceRecord> MaintenanceRecords => Set<MaintenanceRecord>();
+    public DbSet<Domain.Entities.Fleet.MaintenanceType> FleetMaintenanceTypes => Set<Domain.Entities.Fleet.MaintenanceType>();
+    public DbSet<FuelLog> FuelLogs => Set<FuelLog>();
+    public DbSet<IncidentReport> IncidentReports => Set<IncidentReport>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

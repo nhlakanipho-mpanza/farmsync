@@ -1,0 +1,126 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Work Tasks</h4>
+            <p class="card-category">Manage work assignments</p>
+          </div>
+          <div class="card-body">
+            <!-- Filters -->
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <form class="navbar-form">
+                  <div class="input-group no-border">
+                    <input type="text" 
+                           class="form-control" 
+                           placeholder="Search..."
+                           [(ngModel)]="searchTerm"
+                           name="searchTerm"
+                           (keyup)="onSearch()">
+                    <button mat-raised-button type="button" class="btn btn-white btn-round btn-just-icon">
+                      <i class="material-icons">search</i>
+                      <div class="ripple-container"></div>
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <div class="col-md-2">
+                <mat-form-field class="w-100">
+                  <mat-select placeholder="Status" 
+                              [(ngModel)]="selectedStatus" 
+                              (selectionChange)="onFilterChange()">
+                    <mat-option [value]="''">All Statuses</mat-option>
+                    <mat-option *ngFor="let status of taskStatuses" [value]="status.id">
+                      {{ status.name }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col-md-2">
+                <mat-form-field class="w-100">
+                  <input matInput [matDatepicker]="datePicker" 
+                         placeholder="Scheduled Date" 
+                         [(ngModel)]="selectedDate"
+                         (dateChange)="onFilterChange()">
+                  <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #datePicker></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="col-md-4 text-right">
+                <button mat-raised-button color="primary" class="btn btn-primary btn-round" (click)="addTask()">
+                  <mat-icon>add_task</mat-icon> Add Task
+                </button>
+              </div>
+            </div>
+
+            <!-- Loading -->
+            <div *ngIf="loading" class="text-center p-5">
+              <mat-spinner></mat-spinner>
+            </div>
+
+            <!-- Tasks Table -->
+            <div *ngIf="!loading" class="table-responsive">
+              <table class="table table-hover">
+                <thead class="text-primary">
+                  <tr>
+                    <th>Task Name</th>
+                    <th>Work Area</th>
+                    <th>Scheduled Date</th>
+                    <th>Assigned To</th>
+                    <th>Est. Hours</th>
+                    <th>Actual Hours</th>
+                    <th>Status</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let task of filteredTasks">
+                    <td>
+                      <strong>{{ task.taskName }}</strong><br>
+                      <small class="text-muted">{{ task.description }}</small>
+                    </td>
+                    <td>{{ task.workAreaName || 'N/A' }}</td>
+                    <td>{{ task.scheduledDate | date }}</td>
+                    <td>
+                      <span *ngIf="task.teamName">
+                        <mat-icon class="small-icon">groups</mat-icon> {{ task.teamName }}
+                      </span>
+                      <span *ngIf="task.employeeName">
+                        <mat-icon class="small-icon">person</mat-icon> {{ task.employeeName }}
+                      </span>
+                      <span *ngIf="!task.teamName && !task.employeeName">Not Assigned</span>
+                    </td>
+                    <td>{{ task.estimatedHours || '-' }}</td>
+                    <td>{{ task.actualHours || '-' }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="getStatusClass(task.taskStatusName)">
+                        {{ task.taskStatusName }}
+                      </span>
+                    </td>
+                    <td class="td-actions text-right">
+                      <button mat-icon-button color="accent" 
+                              (click)="editTask(task.id)" 
+                              matTooltip="Edit">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button color="warn" 
+                              (click)="deleteTask(task.id, task.taskName)" 
+                              matTooltip="Delete">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="filteredTasks.length === 0">
+                    <td colspan="8" class="text-center text-muted">No tasks found</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

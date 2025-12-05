@@ -1,0 +1,166 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <!-- KPI Cards -->
+    <div class="row">
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-warning card-header-icon">
+            <div class="card-icon">
+              <mat-icon>local_shipping</mat-icon>
+            </div>
+            <p class="card-category">Total Vehicles</p>
+            <h3 class="card-title">{{ totalVehicles }}</h3>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <mat-icon>update</mat-icon>
+              All registered vehicles
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-success card-header-icon">
+            <div class="card-icon">
+              <mat-icon>check_circle</mat-icon>
+            </div>
+            <p class="card-category">Active Vehicles</p>
+            <h3 class="card-title">{{ activeVehicles }}</h3>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <mat-icon>update</mat-icon>
+              Currently in service
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-danger card-header-icon">
+            <div class="card-icon">
+              <mat-icon>build</mat-icon>
+            </div>
+            <p class="card-category">Maintenance Due</p>
+            <h3 class="card-title">{{ maintenanceDue }}</h3>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <mat-icon>warning</mat-icon>
+              Requires attention
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Vehicles & Maintenance -->
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Active Vehicles</h4>
+            <p class="card-category">Recently accessed vehicles</p>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Registration</th>
+                    <th>Make/Model</th>
+                    <th>Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let vehicle of recentVehicles">
+                    <td>{{ vehicle.registrationNumber }}</td>
+                    <td>{{ vehicle.make }} {{ vehicle.model }}</td>
+                    <td>{{ vehicle.vehicleTypeName }}</td>
+                  </tr>
+                  <tr *ngIf="recentVehicles.length === 0">
+                    <td colspan="3" class="text-center text-muted">No active vehicles</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header card-header-danger">
+            <h4 class="card-title">Maintenance Due</h4>
+            <p class="card-category">Vehicles requiring service</p>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Registration</th>
+                    <th>Make/Model</th>
+                    <th>Odometer</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let vehicle of maintenanceVehicles">
+                    <td>{{ vehicle.registrationNumber }}</td>
+                    <td>{{ vehicle.make }} {{ vehicle.model }}</td>
+                    <td>{{ vehicle.currentOdometer | number }} km</td>
+                  </tr>
+                  <tr *ngIf="maintenanceVehicles.length === 0">
+                    <td colspan="3" class="text-center text-muted">No maintenance due</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-info">
+            <h4 class="card-title">Quick Actions</h4>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-3">
+                <button mat-raised-button color="primary" routerLink="/fleet/vehicles/create" class="w-100">
+                  <mat-icon>add</mat-icon>
+                  Add Vehicle
+                </button>
+              </div>
+              <div class="col-md-3">
+                <button mat-raised-button color="accent" routerLink="/fleet/gps" class="w-100">
+                  <mat-icon>map</mat-icon>
+                  GPS Tracking
+                </button>
+              </div>
+              <div class="col-md-3">
+                <button mat-raised-button routerLink="/fleet/vehicles" class="w-100">
+                  <mat-icon>list</mat-icon>
+                  View All Vehicles
+                </button>
+              </div>
+              <div class="col-md-3">
+                <button mat-raised-button routerLink="/fleet/maintenance" class="w-100">
+                  <mat-icon>build</mat-icon>
+                  Maintenance Schedule
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

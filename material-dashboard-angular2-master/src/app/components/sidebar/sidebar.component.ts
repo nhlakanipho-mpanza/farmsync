@@ -55,6 +55,62 @@ export const ROUTES: RouteInfo[] = [
       roles: [UserRole.Admin, UserRole.Manager]
     },
     { 
+      path: '/hr/employees', 
+      title: 'Employees',  
+      icon:'badge', 
+      class: '',
+      roles: [UserRole.Admin, UserRole.HR, UserRole.Manager]
+    },
+    { 
+      path: '/hr/teams', 
+      title: 'Teams',  
+      icon:'groups', 
+      class: '',
+      roles: [UserRole.Admin, UserRole.Manager]
+    },
+    { 
+      path: '/hr/tasks', 
+      title: 'Work Tasks',  
+      icon:'assignment', 
+      class: '',
+      roles: [UserRole.Admin, UserRole.Manager]
+    },
+    { 
+      path: '/hr/attendance', 
+      title: 'Attendance',  
+      icon:'access_time', 
+      class: '',
+      roles: [UserRole.Admin, UserRole.HR, UserRole.Manager]
+    },
+    { 
+      path: '/hr/issuing', 
+      title: 'Issuing',  
+      icon:'swap_horiz', 
+      class: '',
+      roles: [UserRole.Admin, UserRole.Manager]
+    },
+    { 
+      path: '/fleet/dashboard', 
+      title: 'Fleet Dashboard',  
+      icon:'dashboard', 
+      class: '',
+      roles: [UserRole.Admin, UserRole.Manager]
+    },
+    { 
+      path: '/fleet/vehicles', 
+      title: 'Vehicles',  
+      icon:'local_shipping', 
+      class: '',
+      roles: [UserRole.Admin, UserRole.Manager]
+    },
+    { 
+      path: '/fleet/gps', 
+      title: 'GPS Tracking',  
+      icon:'map', 
+      class: '',
+      roles: [UserRole.Admin, UserRole.Manager]
+    },
+    { 
       path: '/users', 
       title: 'User Management',  
       icon:'people', 

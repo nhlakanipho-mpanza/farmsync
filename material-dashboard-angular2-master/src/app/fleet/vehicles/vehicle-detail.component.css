@@ -1,0 +1,38 @@
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.badge-success {
+  background-color: #4caf50;
+  color: white;
+}
+
+.badge-danger {
+  background-color: #f44336;
+  color: white;
+}
+
+h5 {
+  color: #3c4858;
+  font-weight: 400;
+  margin-bottom: 15px;
+}
+
+.my-4 {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.mr-2 {
+  margin-right: 8px;
+}
+
+.mt-4 {
+  margin-top: 24px;
+}
+
+p {
+  margin-bottom: 10px;
+}

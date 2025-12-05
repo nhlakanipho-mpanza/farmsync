@@ -6,10 +6,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./user-profile.component.css']
 })
 export class UserProfileComponent implements OnInit {
+  activeSection: string = 'profile';
 
   constructor() { }
 
   ngOnInit() {
   }
 
+  setActiveSection(section: string) {
+    this.activeSection = section;
+  }
 }

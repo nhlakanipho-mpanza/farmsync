@@ -1,0 +1,112 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Teams</h4>
+            <p class="card-category">Manage work teams</p>
+          </div>
+          <div class="card-body">
+            <!-- Filters -->
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <form class="navbar-form">
+                  <div class="input-group no-border">
+                    <input type="text" 
+                           class="form-control" 
+                           placeholder="Search..."
+                           [(ngModel)]="searchTerm"
+                           name="searchTerm"
+                           (keyup)="onSearch()">
+                    <button mat-raised-button type="button" class="btn btn-white btn-round btn-just-icon">
+                      <i class="material-icons">search</i>
+                      <div class="ripple-container"></div>
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <div class="col-md-2">
+                <mat-slide-toggle [(ngModel)]="showActiveOnly" 
+                                  (change)="onActiveToggle()" 
+                                  class="mt-3">
+                  Active Only
+                </mat-slide-toggle>
+              </div>
+              <div class="col-md-6 text-right">
+                <button mat-raised-button color="primary" class="btn btn-primary btn-round" (click)="addTeam()">
+                  <mat-icon>add</mat-icon> Add Team
+                </button>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row mb-3">
+            </div>
+
+            <!-- Loading -->
+            <div *ngIf="loading" class="text-center p-5">
+              <mat-spinner></mat-spinner>
+            </div>
+
+            <!-- Teams Table -->
+            <div *ngIf="!loading" class="table-responsive">
+              <table class="table table-hover">
+                <thead class="text-primary">
+                  <tr>
+                    <th>Team Name</th>
+                    <th>Description</th>
+                    <th>Team Type</th>
+                    <th>Team Leader</th>
+                    <th>Status</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let team of filteredTeams">
+                    <td>{{ team.name }}</td>
+                    <td>{{ team.description || 'N/A' }}</td>
+                    <td>
+                      <span class="badge badge-info">{{ team.teamTypeName || 'N/A' }}</span>
+                    </td>
+                    <td>{{ team.teamLeaderName || 'Not Assigned' }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="team.isActive ? 'badge-success' : 'badge-secondary'">
+                        {{ team.isActive ? 'Active' : 'Inactive' }}
+                      </span>
+                    </td>
+                    <td class="td-actions text-right">
+                      <button mat-icon-button color="primary" 
+                              (click)="viewTeam(team.id)" 
+                              matTooltip="View Details">
+                        <mat-icon>visibility</mat-icon>
+                      </button>
+                      <button mat-icon-button color="accent" 
+                              (click)="assignMembers(team.id)" 
+                              matTooltip="Assign Members">
+                        <mat-icon>group_add</mat-icon>
+                      </button>
+                      <button mat-icon-button color="accent" 
+                              (click)="editTeam(team.id)" 
+                              matTooltip="Edit">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button color="warn" 
+                              (click)="deleteTeam(team.id, team.name)" 
+                              matTooltip="Delete">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="filteredTeams.length === 0">
+                    <td colspan="6" class="text-center text-muted">No teams found</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

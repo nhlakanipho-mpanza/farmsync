@@ -37,8 +37,8 @@
                 </mat-form-field>
               </div>
               <div class="col-md-4 text-right">
-                <button class="btn btn-primary btn-round" (click)="createNew()">
-                  <i class="material-icons">add</i> New Purchase Order
+                <button class="btn btn-primary btn-round" mat-Tooltip="Add new purchase order" (click)="createNew()">
+                  <i class="material-icons">add_shopping_cart</i> New PO
                 </button>
               </div>
             </div>
@@ -78,27 +78,27 @@
                     <td>R {{ po.totalAmount | number: '1.2-2' }}</td>
                     <td class="td-actions text-right">
                       <button mat-icon-button 
-                              matTooltip="View Details"
+                              matTooltip="View PO Details"
                               class="btn btn-info btn-link btn-sm"
                               (click)="viewDetails(po.id)">
                         <i class="material-icons">visibility</i>
                       </button>
                       <button mat-icon-button 
-                              matTooltip="Edit"
+                              matTooltip="Edit PO"
                               class="btn btn-info btn-link btn-sm"
                               *ngIf="po.status === 'Created'"
                               (click)="editPurchaseOrder(po.id)">
                         <i class="material-icons">edit</i>
                       </button>
                       <button mat-icon-button 
-                              matTooltip="Approve"
+                              matTooltip="Approve PO"
                               class="btn btn-success btn-link btn-sm"
                               *ngIf="po.status === 'Created'"
                               (click)="approvePurchaseOrder(po.id)">
                         <i class="material-icons">check_circle</i>
                       </button>
                       <button mat-icon-button 
-                              matTooltip="Delete"
+                              matTooltip="Delete PO"
                               class="btn btn-danger btn-link btn-sm"
                               *ngIf="po.status === 'Created'"
                               (click)="deletePurchaseOrder(po.id)">

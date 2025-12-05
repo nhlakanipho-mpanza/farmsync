@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
 import { SupplierService } from '../services/supplier.service';
 import { Supplier } from '../models/procurement.model';
@@ -22,7 +23,8 @@ import { Supplier } from '../models/procurement.model';
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatChipsModule
+    MatChipsModule,
+    MatTooltipModule
   ],
   templateUrl: './supplier-list.component.html',
   styleUrls: ['./supplier-list.component.scss']

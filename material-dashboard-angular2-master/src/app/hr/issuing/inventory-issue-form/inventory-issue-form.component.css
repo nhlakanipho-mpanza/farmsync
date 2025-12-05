@@ -1,0 +1,16 @@
+.w-100 {
+  width: 100%;
+}
+
+mat-button-toggle-group {
+  box-shadow: none;
+}
+
+mat-button-toggle {
+  border: 1px solid #ddd;
+}
+
+.mat-button-toggle-checked {
+  background: linear-gradient(60deg, #616161, #212121);
+  color: white;
+}

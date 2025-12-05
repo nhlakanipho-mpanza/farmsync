@@ -1,0 +1,52 @@
+.w-100 {
+  width: 100%;
+}
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.badge-success {
+  background-color: #4caf50;
+  color: white;
+}
+
+.badge-info {
+  background-color: #00bcd4;
+  color: white;
+}
+
+.badge-danger {
+  background-color: #f44336;
+  color: white;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
+}
+
+.text-muted {
+  color: #999;
+}
+
+.text-center {
+  text-align: center;
+}
+
+table {
+  margin-top: 15px;
+}
+
+mat-checkbox {
+  display: block;
+}

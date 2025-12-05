@@ -1,105 +1,392 @@
 <div class="main-content">
   <div class="container-fluid">
-      <div class="row">
-          <div class="col-md-8">
-              <div class="card">
-                  <div class="card-header card-header-danger">
-                      <h4 class="card-title">Edit Profile</h4>
-                      <p class="card-category">Complete your profile</p>
-                  </div>
-                  <div class="card-body">
-                      <form>
-                          <div class="row">
-                              <div class="col-md-5">
-                                <mat-form-field class="example-full-width">
-                                    <input matInput placeholder="Company (disabled)" disabled>
-                                  </mat-form-field>
-                              </div>
-                              <div class="col-md-3">
-                                  <mat-form-field class="example-full-width">
-                                    <input matInput placeholder="Username">
-                                  </mat-form-field>
-                              </div>
-                              <div class="col-md-4">
-                                  <mat-form-field class="example-full-width">
-                                    <input matInput placeholder="Email address" type="email">
-                                  </mat-form-field>
-                              </div>
-                          </div>
-                          <div class="row">
-                              <div class="col-md-6">
-                                <mat-form-field class="example-full-width">
-                                  <input matInput placeholder="Fist Name" type="text">
-                                </mat-form-field>
-                              </div>
-                              <div class="col-md-6">
-                                <mat-form-field class="example-full-width">
-                                  <input matInput placeholder="Last Name" type="text">
-                                </mat-form-field>
-                              </div>
-                          </div>
-                          <div class="row">
-                              <div class="col-md-12">
-                                <mat-form-field class="example-full-width">
-                                  <input matInput placeholder="Adress" type="text">
-                                </mat-form-field>
-                              </div>
-                          </div>
-                          <div class="row">
-                              <div class="col-md-4">
-                                <mat-form-field class="example-full-width">
-                                  <input matInput placeholder="City" type="text">
-                                </mat-form-field>
-                              </div>
-                              <div class="col-md-4">
-                                <mat-form-field class="example-full-width">
-                                  <input matInput placeholder="Country" type="text">
-                                </mat-form-field>
-                              </div>
-                              <div class="col-md-4">
-                                <mat-form-field class="example-full-width">
-                                  <input matInput placeholder="Postal Code" type="text">
-                                </mat-form-field>
-                              </div>
-                          </div>
-                          <div class="row">
-                              <div class="col-md-12">
-                                <label>About Me</label>
-                                <mat-form-field class="example-full-width">
-                                   <textarea matInput placeholder="Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo."></textarea>
-                                 </mat-form-field>
-                                  <!-- <div class="form-group">
-
-                                      <div class="form-group">
-                                          <label class="bmd-label-floating"> Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo.</label>
-                                          <textarea class="form-control" rows="5"></textarea>
-                                      </div>
-                                  </div> -->
-                              </div>
-                          </div>
-                          <button mat-raised-button type="submit" class="btn btn-danger pull-right">Update Profile</button>
-                          <div class="clearfix"></div>
-                      </form>
-                  </div>
-              </div>
+    <div class="row">
+      <!-- Sidebar Navigation -->
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body p-4">
+            <div class="list-group list-group-flush">
+              <a (click)="setActiveSection('profile')" 
+                 class="list-group-item list-group-item-action" 
+                 [class.active]="activeSection === 'profile'"
+                 style="cursor: pointer;">
+                <i class="material-icons">person</i> Profile
+              </a>
+              <a (click)="setActiveSection('basic-info')" 
+                 class="list-group-item list-group-item-action"
+                 [class.active]="activeSection === 'basic-info'"
+                 style="cursor: pointer;">
+                <i class="material-icons">info</i> Basic Info
+              </a>
+              <a (click)="setActiveSection('change-password')" 
+                 class="list-group-item list-group-item-action"
+                 [class.active]="activeSection === 'change-password'"
+                 style="cursor: pointer;">
+                <i class="material-icons">lock</i> Change Password
+              </a>
+              <a (click)="setActiveSection('2fa')" 
+                 class="list-group-item list-group-item-action"
+                 [class.active]="activeSection === '2fa'"
+                 style="cursor: pointer;">
+                <i class="material-icons">security</i> 2FA
+              </a>
+              <a (click)="setActiveSection('accounts')" 
+                 class="list-group-item list-group-item-action"
+                 [class.active]="activeSection === 'accounts'"
+                 style="cursor: pointer;">
+                <i class="material-icons">account_balance</i> Accounts
+              </a>
+              <a (click)="setActiveSection('notifications')" 
+                 class="list-group-item list-group-item-action"
+                 [class.active]="activeSection === 'notifications'"
+                 style="cursor: pointer;">
+                <i class="material-icons">notifications</i> Notifications
+              </a>
+              <a (click)="setActiveSection('sessions')" 
+                 class="list-group-item list-group-item-action"
+                 [class.active]="activeSection === 'sessions'"
+                 style="cursor: pointer;">
+                <i class="material-icons">devices</i> Sessions
+              </a>
+              <a (click)="setActiveSection('delete')" 
+                 class="list-group-item list-group-item-action"
+                 [class.active]="activeSection === 'delete'"
+                 style="cursor: pointer;">
+                <i class="material-icons">delete</i> Delete Account
+              </a>
+            </div>
           </div>
-          <div class="col-md-4">
-              <div class="card card-profile">
-                  <div class="card-avatar">
-                      <a href="javascript:void(0)">
-                          <img class="img" src="./assets/img/faces/marc.jpg" />
-                      </a>
-                  </div>
-                  <div class="card-body">
-                      <h6 class="card-category text-gray">CEO / Co-Founder</h6>
-                      <h4 class="card-title">Alec Thompson</h4>
-                      <p class="card-description">
-                          Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...
-                      </p>
-                      <a href="javascript:void(0)" class="btn btn-danger btn-round">Follow</a>
-                  </div>
-              </div>
-          </div>
+        </div>
       </div>
+
+      <!-- Main Content Area -->
+      <div class="col-md-9">
+        <div class="card">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-auto">
+                <img src="./assets/img/faces/marc.jpg" class="rounded-circle" width="100" height="100" alt="Profile">
+              </div>
+              <div class="col">
+                <h4 class="mb-0">Alex Thompson</h4>
+                <p class="text-muted mb-0">CEO / Co-Founder</p>
+              </div>
+              <div class="col-auto">
+                <mat-slide-toggle>Switch to Invisible</mat-slide-toggle>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+
+            <!-- Profile Section -->
+            <mat-tab-group *ngIf="activeSection === 'profile'">
+              <mat-tab label="Overview">
+                <div class="p-4">
+                  <h5 class="mb-4">Profile Overview</h5>
+                  <p class="text-muted">View your profile information and activity</p>
+                  <div class="row mt-4">
+                    <div class="col-md-6">
+                      <p><strong>Full Name:</strong> Alex Thompson</p>
+                      <p><strong>Role:</strong> CEO / Co-Founder</p>
+                      <p><strong>Email:</strong> example@email.com</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p><strong>Location:</strong> Sydney, A</p>
+                      <p><strong>Phone:</strong> +40 735 631 620</p>
+                      <p><strong>Status:</strong> <span class="badge-success">Active</span></p>
+                    </div>
+                  </div>
+                </div>
+              </mat-tab>
+              <mat-tab label="Activity">
+                <div class="p-4">
+                  <h5 class="mb-4">Recent Activity</h5>
+                  <p class="text-muted">Your recent activity will be displayed here</p>
+                </div>
+              </mat-tab>
+              <mat-tab label="Settings">
+                <div class="p-4">
+                  <h5 class="mb-4">Profile Settings</h5>
+                  <p class="text-muted">Manage your profile preferences</p>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+
+            <!-- Basic Info Section -->
+            <mat-tab-group *ngIf="activeSection === 'basic-info'">
+              <mat-tab label="Personal">
+                <div class="p-4">
+                  <h5 class="mb-4">Basic Info</h5>
+                  <form>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <mat-form-field class="example-full-width">
+                          <mat-label>First Name</mat-label>
+                          <input matInput placeholder="Alec" value="Alec">
+                        </mat-form-field>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <mat-form-field class="example-full-width">
+                          <mat-label>Last Name</mat-label>
+                          <input matInput placeholder="Thompson" value="Thompson">
+                        </mat-form-field>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-4 mb-3">
+                        <mat-form-field class="example-full-width">
+                          <mat-label>I'm</mat-label>
+                          <mat-select value="male">
+                            <mat-option value="male">Male</mat-option>
+                            <mat-option value="female">Female</mat-option>
+                            <mat-option value="other">Other</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                      <div class="col-md-8 mb-3">
+                        <label class="d-block text-muted small mb-2">Birth Date</label>
+                        <div class="row">
+                          <div class="col-4">
+                            <mat-form-field class="example-full-width">
+                              <mat-label>Month</mat-label>
+                              <mat-select value="february">
+                                <mat-option value="january">January</mat-option>
+                                <mat-option value="february">February</mat-option>
+                                <mat-option value="march">March</mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </div>
+                          <div class="col-4">
+                            <mat-form-field class="example-full-width">
+                              <mat-label>Day</mat-label>
+                              <mat-select value="1">
+                                <mat-option *ngFor="let day of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]" [value]="day">{{day}}</mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </div>
+                          <div class="col-4">
+                            <mat-form-field class="example-full-width">
+                              <mat-label>Year</mat-label>
+                              <mat-select value="2021">
+                                <mat-option value="2021">2021</mat-option>
+                                <mat-option value="2020">2020</mat-option>
+                                <mat-option value="2019">2019</mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row mt-4">
+                      <div class="col-md-12">
+                        <button mat-raised-button color="primary">Update Info</button>
+                        <button mat-button class="ml-2">Cancel</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </mat-tab>
+              <mat-tab label="Contact">
+                <div class="p-4">
+                  <h5 class="mb-4">Contact Information</h5>
+                  <form>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <mat-form-field class="example-full-width">
+                          <mat-label>Email</mat-label>
+                          <input matInput type="email" placeholder="example@email.com" value="example@email.com">
+                        </mat-form-field>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <mat-form-field class="example-full-width">
+                          <mat-label>Confirmation Email</mat-label>
+                          <input matInput type="email" placeholder="example@email.com" value="example@email.com">
+                        </mat-form-field>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <mat-form-field class="example-full-width">
+                          <mat-label>Your Location</mat-label>
+                          <input matInput placeholder="Sydney, A" value="Sydney, A">
+                        </mat-form-field>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <mat-form-field class="example-full-width">
+                          <mat-label>Phone Number</mat-label>
+                          <input matInput placeholder="+40 735 631 620" value="+40 735 631 620">
+                        </mat-form-field>
+                      </div>
+                    </div>
+
+                    <div class="row mt-4">
+                      <div class="col-md-12">
+                        <button mat-raised-button color="primary">Update Contact</button>
+                        <button mat-button class="ml-2">Cancel</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </mat-tab>
+              <mat-tab label="Preferences">
+                <div class="p-4">
+                  <h5 class="mb-4">Preferences</h5>
+                  <div class="row">
+                    <div class="col-md-12 mb-3">
+                      <label class="d-block text-muted small mb-2">Language</label>
+                      <div class="language-chips">
+                        <span class="language-chip">react</span>
+                        <span class="language-chip">angular</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+
+            <!-- Change Password Section -->
+            <mat-tab-group *ngIf="activeSection === 'change-password'">
+              <mat-tab label="Change Password">
+                <div class="p-4">
+                  <h5 class="mb-4">Change Password</h5>
+                  <form>
+                    <div class="row">
+                      <div class="col-md-12 mb-3">
+                        <mat-form-field class="example-full-width">
+                          <mat-label>Current Password</mat-label>
+                          <input matInput type="password" placeholder="Current Password">
+                          <mat-icon matSuffix>settings</mat-icon>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <mat-form-field class="example-full-width">
+                          <mat-label>New Password</mat-label>
+                          <input matInput type="password" placeholder="New Password">
+                        </mat-form-field>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <mat-form-field class="example-full-width">
+                          <mat-label>Confirm New Password</mat-label>
+                          <input matInput type="password" placeholder="Confirm New Password">
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="row mt-4">
+                      <div class="col-md-12">
+                        <button mat-raised-button color="primary">Update Password</button>
+                        <button mat-button class="ml-2">Cancel</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </mat-tab>
+              <mat-tab label="Password Requirements">
+                <div class="p-4">
+                  <h5 class="mb-4">Password Requirements</h5>
+                  <ul>
+                    <li>At least 8 characters long</li>
+                    <li>Contains at least one uppercase letter</li>
+                    <li>Contains at least one lowercase letter</li>
+                    <li>Contains at least one number</li>
+                    <li>Contains at least one special character</li>
+                  </ul>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+
+            <!-- 2FA Section -->
+            <mat-tab-group *ngIf="activeSection === '2fa'">
+              <mat-tab label="Setup">
+                <div class="p-4">
+                  <h5 class="mb-4">Two-Factor Authentication</h5>
+                  <p class="text-muted">Enable 2FA for additional security</p>
+                  <button mat-raised-button color="primary" class="mt-3">Enable 2FA</button>
+                </div>
+              </mat-tab>
+              <mat-tab label="Backup Codes">
+                <div class="p-4">
+                  <h5 class="mb-4">Backup Codes</h5>
+                  <p class="text-muted">Generate backup codes for account recovery</p>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+
+            <!-- Accounts Section -->
+            <mat-tab-group *ngIf="activeSection === 'accounts'">
+              <mat-tab label="Connected Accounts">
+                <div class="p-4">
+                  <h5 class="mb-4">Connected Accounts</h5>
+                  <p class="text-muted">Manage your connected accounts and integrations</p>
+                </div>
+              </mat-tab>
+              <mat-tab label="Social Media">
+                <div class="p-4">
+                  <h5 class="mb-4">Social Media</h5>
+                  <p class="text-muted">Link your social media accounts</p>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+
+            <!-- Notifications Section -->
+            <mat-tab-group *ngIf="activeSection === 'notifications'">
+              <mat-tab label="Email Notifications">
+                <div class="p-4">
+                  <h5 class="mb-4">Email Notifications</h5>
+                  <p class="text-muted">Configure your email notification preferences</p>
+                </div>
+              </mat-tab>
+              <mat-tab label="Push Notifications">
+                <div class="p-4">
+                  <h5 class="mb-4">Push Notifications</h5>
+                  <p class="text-muted">Manage push notification settings</p>
+                </div>
+              </mat-tab>
+              <mat-tab label="SMS">
+                <div class="p-4">
+                  <h5 class="mb-4">SMS Notifications</h5>
+                  <p class="text-muted">Configure SMS alert preferences</p>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+
+            <!-- Sessions Section -->
+            <mat-tab-group *ngIf="activeSection === 'sessions'">
+              <mat-tab label="Active Sessions">
+                <div class="p-4">
+                  <h5 class="mb-4">Active Sessions</h5>
+                  <p class="text-muted">View and manage your active login sessions</p>
+                </div>
+              </mat-tab>
+              <mat-tab label="Login History">
+                <div class="p-4">
+                  <h5 class="mb-4">Login History</h5>
+                  <p class="text-muted">Review your recent login activity</p>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+
+            <!-- Delete Account Section -->
+            <mat-tab-group *ngIf="activeSection === 'delete'">
+              <mat-tab label="Delete Account">
+                <div class="p-4">
+                  <h5 class="mb-4 text-danger">Delete Account</h5>
+                  <p class="text-muted">This action cannot be undone. All your data will be permanently deleted.</p>
+                  <button mat-raised-button color="warn" class="mt-3">Delete My Account</button>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

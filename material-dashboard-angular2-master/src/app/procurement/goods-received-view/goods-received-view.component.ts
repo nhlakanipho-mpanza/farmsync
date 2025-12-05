@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { GoodsReceivedService } from '../services/goods-received.service';
 import { GoodsReceived } from '../models/procurement.model';
+import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-goods-received-view',
@@ -27,7 +28,8 @@ import { GoodsReceived } from '../models/procurement.model';
     MatTableModule,
     MatSnackBarModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatTooltipModule
   ],
   templateUrl: './goods-received-view.component.html',
   styleUrls: ['./goods-received-view.component.scss']

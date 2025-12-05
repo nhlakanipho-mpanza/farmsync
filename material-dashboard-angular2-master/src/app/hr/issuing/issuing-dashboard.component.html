@@ -1,0 +1,278 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <!-- Action Buttons -->
+    <div class="row mb-3">
+      <div class="col-md-12 text-right">
+        <button mat-raised-button class="btn btn-primary btn-round mr-2" routerLink="/hr/issuing/inventory/create">
+          <mat-icon>inventory</mat-icon> Issue Inventory
+        </button>
+        <button mat-raised-button class="btn btn-info btn-round" routerLink="/hr/issuing/equipment/create">
+          <mat-icon>construction</mat-icon> Checkout Equipment
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-warning card-header-icon">
+            <div class="card-icon">
+              <mat-icon>pending_actions</mat-icon>
+            </div>
+            <p class="card-category">Pending Approvals</p>
+            <h3 class="card-title">{{ pendingInventory.length }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-danger card-header-icon">
+            <div class="card-icon">
+              <mat-icon>warning</mat-icon>
+            </div>
+            <p class="card-category">Overdue Equipment</p>
+            <h3 class="card-title">{{ overdueEquipment.length }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-success card-header-icon">
+            <div class="card-icon">
+              <mat-icon>inventory</mat-icon>
+            </div>
+            <p class="card-category">Inventory Issues</p>
+            <h3 class="card-title">{{ inventoryIssues.length }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-info card-header-icon">
+            <div class="card-icon">
+              <mat-icon>construction</mat-icon>
+            </div>
+            <p class="card-category">Equipment Issues</p>
+            <h3 class="card-title">{{ equipmentIssues.length }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Mode Tabs -->
+    <div class="row mb-3">
+      <div class="col-md-12">
+        <mat-button-toggle-group [(ngModel)]="viewMode">
+          <mat-button-toggle value="pending">Pending Approvals ({{ pendingInventory.length }})</mat-button-toggle>
+          <mat-button-toggle value="inventory">Inventory Issues</mat-button-toggle>
+          <mat-button-toggle value="equipment">Equipment Issues</mat-button-toggle>
+          <mat-button-toggle value="overdue">Overdue ({{ overdueEquipment.length }})</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+
+    <!-- Pending Approvals -->
+    <div class="row" *ngIf="viewMode === 'pending'">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-warning">
+            <h4 class="card-title">Pending Approvals</h4>
+            <p class="card-category">Inventory requests awaiting approval</p>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="text-primary">
+                  <tr>
+                    <th>Issue Number</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Requested By</th>
+                    <th>Team/Employee</th>
+                    <th>Date</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let issue of pendingInventory">
+                    <td>{{ issue.issueNumber }}</td>
+                    <td>{{ issue.inventoryItemName }}</td>
+                    <td>{{ issue.quantity }}</td>
+                    <td>{{ issue.issuedBy }}</td>
+                    <td>
+                      <span *ngIf="issue.teamName">Team: {{ issue.teamName }}</span>
+                      <span *ngIf="issue.employeeName">{{ issue.employeeName }}</span>
+                    </td>
+                    <td>{{ issue.issuedDate | date }}</td>
+                    <td class="td-actions text-right">
+                      <button mat-icon-button color="primary" 
+                              (click)="approveInventoryIssue(issue.id)" 
+                              matTooltip="Approve">
+                        <mat-icon>check_circle</mat-icon>
+                      </button>
+                      <button mat-icon-button color="warn" 
+                              (click)="rejectInventoryIssue(issue.id)" 
+                              matTooltip="Reject">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="pendingInventory.length === 0">
+                    <td colspan="7" class="text-center text-muted">No pending approvals</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory Issues -->
+    <div class="row" *ngIf="viewMode === 'inventory'">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-success">
+            <h4 class="card-title">Inventory Issues</h4>
+            <p class="card-category">All inventory issue records</p>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="text-primary">
+                  <tr>
+                    <th>Issue Number</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Team/Employee</th>
+                    <th>Issued By</th>
+                    <th>Approved By</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let issue of inventoryIssues">
+                    <td>{{ issue.issueNumber }}</td>
+                    <td>{{ issue.inventoryItemName }}</td>
+                    <td>{{ issue.quantity }}</td>
+                    <td>
+                      <span *ngIf="issue.teamName">{{ issue.teamName }}</span>
+                      <span *ngIf="issue.employeeName">{{ issue.employeeName }}</span>
+                    </td>
+                    <td>{{ issue.issuedBy }}</td>
+                    <td>{{ issue.approvedBy || 'N/A' }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="getStatusClass(issue.issueStatusName)">
+                        {{ issue.issueStatusName }}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="inventoryIssues.length === 0">
+                    <td colspan="7" class="text-center text-muted">No inventory issues found</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Equipment Issues -->
+    <div class="row" *ngIf="viewMode === 'equipment'">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-info">
+            <h4 class="card-title">Equipment Issues</h4>
+            <p class="card-category">All equipment issue records</p>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="text-primary">
+                  <tr>
+                    <th>Issue Number</th>
+                    <th>Equipment</th>
+                    <th>Team/Employee</th>
+                    <th>Issued Date</th>
+                    <th>Expected Return</th>
+                    <th>Actual Return</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let issue of equipmentIssues">
+                    <td>{{ issue.issueNumber }}</td>
+                    <td>{{ issue.equipmentName }}</td>
+                    <td>
+                      <span *ngIf="issue.teamName">{{ issue.teamName }}</span>
+                      <span *ngIf="issue.employeeName">{{ issue.employeeName }}</span>
+                    </td>
+                    <td>{{ issue.issuedDate | date }}</td>
+                    <td>{{ issue.expectedReturnDate | date }}</td>
+                    <td>{{ issue.actualReturnDate ? (issue.actualReturnDate | date) : 'Not Returned' }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="getStatusClass(issue.issueStatusName)">
+                        {{ issue.issueStatusName }}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="equipmentIssues.length === 0">
+                    <td colspan="7" class="text-center text-muted">No equipment issues found</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overdue Equipment -->
+    <div class="row" *ngIf="viewMode === 'overdue'">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-danger">
+            <h4 class="card-title">Overdue Equipment</h4>
+            <p class="card-category">Equipment past expected return date</p>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="text-primary">
+                  <tr>
+                    <th>Issue Number</th>
+                    <th>Equipment</th>
+                    <th>Team/Employee</th>
+                    <th>Expected Return</th>
+                    <th>Days Overdue</th>
+                    <th>Issued By</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let issue of overdueEquipment">
+                    <td>{{ issue.issueNumber }}</td>
+                    <td>{{ issue.equipmentName }}</td>
+                    <td>
+                      <span *ngIf="issue.teamName">{{ issue.teamName }}</span>
+                      <span *ngIf="issue.employeeName">{{ issue.employeeName }}</span>
+                    </td>
+                    <td>{{ issue.expectedReturnDate | date }}</td>
+                    <td class="text-danger">
+                      <strong>{{ calculateOverdueDays(issue.expectedReturnDate) }}</strong>
+                    </td>
+                    <td>{{ issue.issuedBy }}</td>
+                  </tr>
+                  <tr *ngIf="overdueEquipment.length === 0">
+                    <td colspan="6" class="text-center text-muted">No overdue equipment</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

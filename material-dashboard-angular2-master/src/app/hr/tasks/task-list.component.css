@@ -1,0 +1,36 @@
+.w-100 {
+  width: 100%;
+}
+
+.small-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+
+.badge-warning {
+  background-color: #ff9800;
+  color: white;
+}
+
+.badge-info {
+  background-color: #00bcd4;
+  color: white;
+}
+
+.badge-success {
+  background-color: #4caf50;
+  color: white;
+}
+
+.badge-secondary {
+  background-color: #9e9e9e;
+  color: white;
+}

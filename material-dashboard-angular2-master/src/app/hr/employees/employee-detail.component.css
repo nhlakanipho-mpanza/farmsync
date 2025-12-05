@@ -1,0 +1,31 @@
+.badge {
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+
+.badge-success {
+  background-color: #4caf50;
+  color: white;
+}
+
+.badge-secondary {
+  background-color: #9e9e9e;
+  color: white;
+}
+
+.ml-2 {
+  margin-left: 10px;
+}
+
+.mt-3 {
+  margin-top: 20px;
+}
+
+.mt-4 {
+  margin-top: 30px;
+}
+
+.table-borderless td {
+  border: none;
+  padding: 8px 0;
+}

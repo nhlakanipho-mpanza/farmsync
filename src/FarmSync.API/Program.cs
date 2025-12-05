@@ -26,6 +26,15 @@ builder.Services.AddScoped<IRepository<FarmSync.Domain.Entities.Inventory.Invent
 builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
 builder.Services.AddScoped<IGoodsReceivedRepository, GoodsReceivedRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+
+// Register HR Repositories
+builder.Services.AddScoped<FarmSync.Domain.Interfaces.HR.IEmployeeRepository, FarmSync.Infrastructure.Repositories.HR.EmployeeRepository>();
+builder.Services.AddScoped<FarmSync.Domain.Interfaces.HR.ITeamRepository, FarmSync.Infrastructure.Repositories.HR.TeamRepository>();
+builder.Services.AddScoped<FarmSync.Domain.Interfaces.HR.IWorkTaskRepository, FarmSync.Infrastructure.Repositories.HR.WorkTaskRepository>();
+builder.Services.AddScoped<FarmSync.Domain.Interfaces.HR.IClockEventRepository, FarmSync.Infrastructure.Repositories.HR.ClockEventRepository>();
+builder.Services.AddScoped<FarmSync.Domain.Interfaces.HR.IInventoryIssueRepository, FarmSync.Infrastructure.Repositories.HR.InventoryIssueRepository>();
+builder.Services.AddScoped<FarmSync.Domain.Interfaces.HR.IEquipmentIssueRepository, FarmSync.Infrastructure.Repositories.HR.EquipmentIssueRepository>();
+
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 // Register Services
@@ -34,6 +43,30 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
 builder.Services.AddScoped<IGoodsReceivedService, GoodsReceivedService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
+
+// Register HR Services
+builder.Services.AddScoped<FarmSync.Application.Interfaces.HR.IEmployeeService, FarmSync.Application.Services.HR.EmployeeService>();
+builder.Services.AddScoped<FarmSync.Application.Interfaces.HR.ITeamService, FarmSync.Application.Services.HR.TeamService>();
+builder.Services.AddScoped<FarmSync.Application.Interfaces.HR.IWorkTaskService, FarmSync.Application.Services.HR.WorkTaskService>();
+builder.Services.AddScoped<FarmSync.Application.Interfaces.HR.IAttendanceService, FarmSync.Application.Services.HR.AttendanceService>();
+builder.Services.AddScoped<FarmSync.Application.Interfaces.HR.IIssuingService, FarmSync.Application.Services.HR.IssuingService>();
+
+// Register Fleet Repositories
+builder.Services.AddScoped<FarmSync.Domain.Interfaces.Fleet.IVehicleRepository, FarmSync.Infrastructure.Repositories.Fleet.VehicleRepository>();
+builder.Services.AddScoped<FarmSync.Domain.Interfaces.Fleet.IDriverAssignmentRepository, FarmSync.Infrastructure.Repositories.Fleet.DriverAssignmentRepository>();
+builder.Services.AddScoped<FarmSync.Domain.Interfaces.Fleet.ITripLogRepository, FarmSync.Infrastructure.Repositories.Fleet.TripLogRepository>();
+builder.Services.AddScoped<FarmSync.Domain.Interfaces.Fleet.IMaintenanceRecordRepository, FarmSync.Infrastructure.Repositories.Fleet.MaintenanceRecordRepository>();
+builder.Services.AddScoped<FarmSync.Domain.Interfaces.Fleet.IFuelLogRepository, FarmSync.Infrastructure.Repositories.Fleet.FuelLogRepository>();
+builder.Services.AddScoped<FarmSync.Domain.Interfaces.Fleet.IIncidentReportRepository, FarmSync.Infrastructure.Repositories.Fleet.IncidentReportRepository>();
+builder.Services.AddScoped<FarmSync.Domain.Interfaces.Fleet.IGPSLocationRepository, FarmSync.Infrastructure.Repositories.Fleet.GPSLocationRepository>();
+
+// Register Fleet Services
+builder.Services.AddScoped<FarmSync.Application.Interfaces.Fleet.IVehicleService, FarmSync.Application.Services.Fleet.VehicleService>();
+builder.Services.AddScoped<FarmSync.Application.Interfaces.Fleet.IDriverAssignmentService, FarmSync.Application.Services.Fleet.DriverAssignmentService>();
+builder.Services.AddScoped<FarmSync.Application.Interfaces.Fleet.ITripLogService, FarmSync.Application.Services.Fleet.TripLogService>();
+builder.Services.AddScoped<FarmSync.Application.Interfaces.Fleet.IMaintenanceService, FarmSync.Application.Services.Fleet.MaintenanceService>();
+builder.Services.AddScoped<FarmSync.Application.Interfaces.Fleet.IFuelService, FarmSync.Application.Services.Fleet.FuelService>();
+builder.Services.AddScoped<FarmSync.Application.Interfaces.Fleet.IGPSTrackingService, FarmSync.Application.Services.Fleet.GPSTrackingService>();
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");

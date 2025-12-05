@@ -26,15 +26,16 @@
                                     </p>
                                 </div>
                                 <div>
-                                    <button mat-raised-button (click)="goBack()" class="btn btn-white btn-round">
+                                    <button mat-raised-button type="button"
+                                        class="btn btn-white btn-round btn-just-icon" (click)="goBack()"
+                                        matTooltip="Go Back">
                                         <mat-icon>arrow_back</mat-icon>
-                                        Back
                                     </button>
                                     <button mat-raised-button class="btn btn-info btn-round" (click)="approveReceipt()"
                                         [disabled]="approving || goodsReceived.status === 'Approved'"
                                         *ngIf="goodsReceived.status === 'Pending'">
                                         <mat-icon>check_circle</mat-icon>
-                                        {{ approving ? 'Approving...' : 'Approve Receipt' }}
+                                        {{ approving ? 'Approving...' : 'Approve' }}
                                     </button>
                                 </div>
                             </div>

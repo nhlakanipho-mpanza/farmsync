@@ -19,6 +19,8 @@ import { GoodsReceivingFormComponent } from 'app/procurement/goods-receiving-for
 import { SupplierListComponent } from 'app/procurement/supplier-list/supplier-list.component';
 import { SupplierFormComponent } from 'app/procurement/supplier-form/supplier-form.component';
 import { ApprovalDashboardComponent } from 'app/procurement/approval-dashboard/approval-dashboard.component';
+import { HRModule } from 'app/hr/hr.module';
+import { FleetModule } from 'app/fleet/fleet.module';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatRippleModule} from '@angular/material/core';
@@ -64,6 +66,8 @@ import {MatTabsModule} from '@angular/material/tabs';
     SupplierListComponent,
     SupplierFormComponent,
     ApprovalDashboardComponent,
+    HRModule,
+    FleetModule,
   ],
   declarations: [
     DashboardComponent,

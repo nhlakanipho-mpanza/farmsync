@@ -1,0 +1,105 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h4 class="card-title">Driver Assignments</h4>
+                <p class="card-category">Current vehicle-driver assignments</p>
+              </div>
+              <button mat-raised-button color="accent" (click)="createAssignment()">
+                <mat-icon>add</mat-icon> Assign Driver
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            
+            <!-- Search Bar -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <mat-form-field class="full-width">
+                  <mat-label>Search</mat-label>
+                  <input matInput [(ngModel)]="searchTerm" (input)="filterAssignments()" 
+                         placeholder="Search by vehicle, driver, or employee number">
+                  <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div *ngIf="loading" class="text-center">
+              <mat-spinner diameter="50"></mat-spinner>
+            </div>
+
+            <!-- Assignments Table -->
+            <div *ngIf="!loading" class="table-responsive">
+              <table class="table table-hover">
+                <thead class="text-primary">
+                  <tr>
+                    <th>Vehicle</th>
+                    <th>Driver</th>
+                    <th>Type</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let assignment of filteredAssignments">
+                    <td>
+                      <a (click)="viewVehicle(assignment.vehicleId)" class="link-primary cursor-pointer">
+                        {{assignment.vehicleRegistration}}
+                      </a>
+                      <br>
+                      <small class="text-muted">{{assignment.vehicleMake}} {{assignment.vehicleModel}}</small>
+                    </td>
+                    <td>
+                      {{assignment.driverName}}
+                      <br>
+                      <small class="text-muted">{{assignment.driverEmployeeNumber}}</small>
+                    </td>
+                    <td>
+                      <span class="badge" [ngClass]="{
+                        'badge-success': assignment.assignmentType === 'Primary',
+                        'badge-info': assignment.assignmentType === 'Temporary',
+                        'badge-warning': assignment.assignmentType === 'Pool'
+                      }">
+                        {{assignment.assignmentType}}
+                      </span>
+                      <span *ngIf="assignment.isPrimary" class="badge badge-primary ml-1">Primary</span>
+                    </td>
+                    <td>{{assignment.startDate | date:'short'}}</td>
+                    <td>
+                      <span *ngIf="assignment.endDate">{{assignment.endDate | date:'short'}}</span>
+                      <span *ngIf="!assignment.endDate" class="badge badge-success">Ongoing</span>
+                    </td>
+                    <td>
+                      <span *ngIf="assignment.notes" [title]="assignment.notes">
+                        {{assignment.notes.length > 30 ? (assignment.notes | slice:0:30) + '...' : assignment.notes}}
+                      </span>
+                    </td>
+                    <td>
+                      <button mat-icon-button color="warn" (click)="endAssignment(assignment)" 
+                              *ngIf="assignment.isCurrentAssignment"
+                              matTooltip="End Assignment">
+                        <mat-icon>stop</mat-icon>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- No Data Message -->
+              <div *ngIf="filteredAssignments.length === 0" class="text-center p-4">
+                <p class="text-muted">No driver assignments found</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

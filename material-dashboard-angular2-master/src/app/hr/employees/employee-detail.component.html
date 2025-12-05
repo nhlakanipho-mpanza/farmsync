@@ -1,0 +1,177 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div *ngIf="loading" class="text-center p-5">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="!loading && employee">
+      <div class="row">
+        <!-- Sidebar Navigation -->
+        <div class="col-md-3">
+          <div class="card">
+            <div class="card-header card-header-primary">
+              <h4 class="card-title">Employee Info</h4>
+            </div>
+            <div class="card-body p-0">
+              <div class="list-group list-group-flush">
+                <a href="#profile" class="list-group-item list-group-item-action active">
+                  <i class="material-icons">person</i> Profile
+                </a>
+                <a href="#basic-info" class="list-group-item list-group-item-action">
+                  <i class="material-icons">info</i> Basic Info
+                </a>
+                <a href="#contact" class="list-group-item list-group-item-action">
+                  <i class="material-icons">contact_mail</i> Contact
+                </a>
+                <a href="#employment" class="list-group-item list-group-item-action">
+                  <i class="material-icons">work</i> Employment
+                </a>
+                <a href="#documents" class="list-group-item list-group-item-action">
+                  <i class="material-icons">description</i> Documents
+                </a>
+                <a href="#attendance" class="list-group-item list-group-item-action">
+                  <i class="material-icons">event</i> Attendance
+                </a>
+                <a href="#performance" class="list-group-item list-group-item-action">
+                  <i class="material-icons">trending_up</i> Performance
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-md-9">
+          <div class="card">
+            <!-- Employee Header -->
+            <div class="card-body">
+              <div class="row align-items-center mb-4">
+                <div class="col-auto">
+                  <img [src]="employee.profilePicture || './assets/img/faces/marc.jpg'" 
+                       class="rounded-circle" width="80" height="80" alt="Profile">
+                </div>
+                <div class="col">
+                  <h4 class="mb-0">{{ employee.fullName }}</h4>
+                  <p class="text-muted mb-0">{{ employee.positionName }}</p>
+                </div>
+                <div class="col-auto">
+                  <span class="badge" [ngClass]="employee.isActive ? 'badge-success' : 'badge-secondary'">
+                    {{ employee.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Tabs -->
+              <mat-tab-group>
+                <mat-tab label="Overview">
+                  <!-- Basic Info Section -->
+                  <div class="pt-4" id="basic-info">
+                    <h5 class="mb-4">Basic Information</h5>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label class="text-muted small">Employee Number</label>
+                        <p class="mb-0"><strong>{{ employee.employeeNumber }}</strong></p>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label class="text-muted small">ID Number</label>
+                        <p class="mb-0"><strong>{{ employee.idNumber || 'N/A' }}</strong></p>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-4 mb-3">
+                        <label class="text-muted small">Gender</label>
+                        <p class="mb-0"><strong>{{ employee.gender || 'N/A' }}</strong></p>
+                      </div>
+                      <div class="col-md-8 mb-3">
+                        <label class="text-muted small">Date of Birth</label>
+                        <p class="mb-0"><strong>{{ employee.dateOfBirth | date:'longDate' }}</strong></p>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label class="text-muted small">Employment Type</label>
+                        <p class="mb-0"><strong>{{ employee.employmentTypeName || 'N/A' }}</strong></p>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label class="text-muted small">Role</label>
+                        <p class="mb-0"><strong>{{ employee.roleTypeName || 'N/A' }}</strong></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Contact Information -->
+                  <div class="pt-4 mt-4 border-top" id="contact">
+                    <h5 class="mb-4">Contact Information</h5>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label class="text-muted small">Email</label>
+                        <p class="mb-0"><strong>{{ employee.email || 'N/A' }}</strong></p>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label class="text-muted small">Phone Number</label>
+                        <p class="mb-0"><strong>{{ employee.contactNumber || 'N/A' }}</strong></p>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-12 mb-3">
+                        <label class="text-muted small">Address</label>
+                        <p class="mb-0"><strong>{{ employee.address || 'N/A' }}</strong></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Employment Dates -->
+                  <div class="pt-4 mt-4 border-top" id="employment">
+                    <h5 class="mb-4">Employment Details</h5>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label class="text-muted small">Hire Date</label>
+                        <p class="mb-0"><strong>{{ employee.hireDate | date:'longDate' }}</strong></p>
+                      </div>
+                      <div class="col-md-6 mb-3" *ngIf="employee.terminationDate">
+                        <label class="text-muted small">Termination Date</label>
+                        <p class="mb-0"><strong>{{ employee.terminationDate | date:'longDate' }}</strong></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mt-4">
+                    <div class="col-md-12">
+                      <button mat-raised-button color="primary" (click)="editEmployee()">
+                        <mat-icon>edit</mat-icon> Edit Employee
+                      </button>
+                      <button mat-button (click)="goBack()" class="ml-2">
+                        <mat-icon>arrow_back</mat-icon> Back to List
+                      </button>
+                    </div>
+                  </div>
+                </mat-tab>
+
+                <mat-tab label="Documents">
+                  <div class="p-4">
+                    <p class="text-muted">Employee documents will be displayed here</p>
+                  </div>
+                </mat-tab>
+
+                <mat-tab label="Attendance">
+                  <div class="p-4">
+                    <p class="text-muted">Attendance history will be displayed here</p>
+                  </div>
+                </mat-tab>
+
+                <mat-tab label="Performance">
+                  <div class="p-4">
+                    <p class="text-muted">Performance reviews will be displayed here</p>
+                  </div>
+                </mat-tab>
+              </mat-tab-group>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+.w-100 {
+  width: 100%;
+}
+
+.mr-2 {
+  margin-right: 8px;
+}
+
+.mt-3 {
+  margin-top: 16px;
+}
+
+h5 {
+  color: #3c4858;
+  font-weight: 400;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}

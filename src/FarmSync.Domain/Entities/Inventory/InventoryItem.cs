@@ -22,6 +22,7 @@ public class InventoryItem : BaseEntity
     public decimal ReorderLevel { get; set; }
     public decimal? UnitPrice { get; set; }  // Standard/List price (for reference)
     public decimal AverageUnitCost { get; set; }  // Weighted average cost (for accounting)
+    public decimal CurrentStockLevel { get; set; }  // Current total stock across all locations
     
     public bool IsActive { get; set; } = true;
     

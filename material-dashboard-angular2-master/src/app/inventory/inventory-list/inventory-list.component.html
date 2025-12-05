@@ -19,7 +19,7 @@
                            [(ngModel)]="searchTerm"
                            name="searchTerm"
                            (keyup)="onSearch()">
-                    <button mat-raised-button type="button" class="btn btn-white btn-round btn-just-icon">
+                      <button mat-raised-button matTooltip="Search Inventory" type="button" class="btn btn-white btn-round btn-just-icon">
                       <i class="material-icons">search</i>
                       <div class="ripple-container"></div>
                     </button>
@@ -27,7 +27,8 @@
                 </form>
               </div>
               <div class="col-md-6 text-right">
-                <button mat-raised-button 
+                <button mat-raised-button
+                              matTooltip="Add Inventory Item"
                         class="btn btn-primary btn-round" 
                         (click)="addItem()">
                   <i class="material-icons">add</i> Add Item

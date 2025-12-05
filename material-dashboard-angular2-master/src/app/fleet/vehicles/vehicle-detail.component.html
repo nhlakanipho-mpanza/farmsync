@@ -1,0 +1,147 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Vehicle Details</h4>
+            <p class="card-category">{{ vehicle?.registrationNumber || 'Loading...' }}</p>
+          </div>
+          <div class="card-body" *ngIf="vehicle">
+            <!-- Basic Information -->
+            <h5>Basic Information</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>Registration Number:</strong> {{ vehicle.registrationNumber }}</p>
+                <p><strong>Make:</strong> {{ vehicle.make }}</p>
+                <p><strong>Model:</strong> {{ vehicle.model }}</p>
+                <p><strong>Year:</strong> {{ vehicle.year }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Type:</strong> {{ vehicle.vehicleTypeName }}</p>
+                <p><strong>Status:</strong> 
+                  <span class="badge badge-success" *ngIf="vehicle.isActive">{{ vehicle.vehicleStatusName }}</span>
+                  <span class="badge badge-danger" *ngIf="!vehicle.isActive">Inactive</span>
+                </p>
+                <p><strong>Fuel Type:</strong> {{ vehicle.fuelTypeName }}</p>
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Technical Details -->
+            <h5>Technical Details</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>Engine Number:</strong> {{ vehicle.engineNumber || '-' }}</p>
+                <p><strong>Chassis Number:</strong> {{ vehicle.chassisNumber || '-' }}</p>
+                <p><strong>Asset Number:</strong> {{ vehicle.assetNumber || '-' }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Current Odometer:</strong> {{ vehicle.currentOdometer | number }} km</p>
+                <p><strong>Engine Hours:</strong> {{ vehicle.engineHours || '-' }}</p>
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Current Driver Assignment -->
+            <h5>Current Driver Assignment</h5>
+            <div *ngIf="loadingAssignment" class="text-center">
+              <mat-spinner diameter="30"></mat-spinner>
+            </div>
+            <div *ngIf="!loadingAssignment && currentAssignment" class="row">
+              <div class="col-md-6">
+                <p><strong>Driver:</strong> {{ currentAssignment.driverName }}</p>
+                <p><strong>Employee Number:</strong> {{ currentAssignment.driverEmployeeNumber }}</p>
+                <p><strong>Assignment Type:</strong> 
+                  <span class="badge" [ngClass]="{
+                    'badge-success': currentAssignment.assignmentType === 'Primary',
+                    'badge-info': currentAssignment.assignmentType === 'Temporary',
+                    'badge-warning': currentAssignment.assignmentType === 'Pool'
+                  }">
+                    {{currentAssignment.assignmentType}}
+                  </span>
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Start Date:</strong> {{ currentAssignment.startDate | date:'short' }}</p>
+                <p *ngIf="currentAssignment.notes"><strong>Notes:</strong> {{ currentAssignment.notes }}</p>
+                <button mat-raised-button color="warn" (click)="endCurrentAssignment()" class="mt-2">
+                  <mat-icon>stop</mat-icon>
+                  End Assignment
+                </button>
+              </div>
+            </div>
+            <div *ngIf="!loadingAssignment && !currentAssignment" class="row">
+              <div class="col-md-12">
+                <p class="text-muted">No driver currently assigned</p>
+                <button mat-raised-button color="primary" (click)="assignDriver()">
+                  <mat-icon>person_add</mat-icon>
+                  Assign Driver
+                </button>
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Maintenance Information -->
+            <h5>Maintenance Information</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>Last Service Date:</strong> {{ vehicle.lastServiceDate ? (vehicle.lastServiceDate | date) : 'Never' }}</p>
+                <p><strong>Next Service Odometer:</strong> {{ vehicle.nextServiceOdometer ? (vehicle.nextServiceOdometer | number) + ' km' : 'Not scheduled' }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Next Service Hours:</strong> {{ vehicle.nextServiceHours || 'Not scheduled' }}</p>
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Purchase Information -->
+            <h5>Purchase Information</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>Purchase Date:</strong> {{ vehicle.purchaseDate ? (vehicle.purchaseDate | date) : '-' }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Purchase Price:</strong> {{ vehicle.purchasePrice ? ('R ' + (vehicle.purchasePrice | number:'1.2-2')) : '-' }}</p>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="row" *ngIf="vehicle.notes">
+              <div class="col-md-12">
+                <p><strong>Notes:</strong></p>
+                <p>{{ vehicle.notes }}</p>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="row mt-4">
+              <div class="col-md-12">
+                <button mat-raised-button (click)="onBack()" class="mr-2">
+                  <mat-icon>arrow_back</mat-icon>
+                  Back to Vehicles
+                </button>
+                <button mat-raised-button color="accent" (click)="trackVehicle()" class="mr-2">
+                  <mat-icon>location_on</mat-icon>
+                  Track on Map
+                </button>
+                <button mat-raised-button color="primary" (click)="editVehicle()">
+                  <mat-icon>edit</mat-icon>
+                  Edit Vehicle
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body text-center" *ngIf="loading">
+            <mat-spinner></mat-spinner>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

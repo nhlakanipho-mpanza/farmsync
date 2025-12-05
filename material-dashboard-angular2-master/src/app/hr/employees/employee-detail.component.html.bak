@@ -1,0 +1,103 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div *ngIf="loading" class="text-center p-5">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="!loading && employee">
+      <!-- Employee Header -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card card-profile">
+            <div class="card-header card-header-primary">
+              <h4 class="card-title">{{ employee.fullName }}</h4>
+              <p class="card-category">{{ employee.positionName }}</p>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <h5><strong>Employee Information</strong></h5>
+                  <table class="table table-borderless">
+                    <tr>
+                      <td><strong>Employee Number:</strong></td>
+                      <td>{{ employee.employeeNumber }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>ID Number:</strong></td>
+                      <td>{{ employee.idNumber || 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Date of Birth:</strong></td>
+                      <td>{{ employee.dateOfBirth | date }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Gender:</strong></td>
+                      <td>{{ employee.gender || 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Employment Type:</strong></td>
+                      <td>{{ employee.employmentTypeName || 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Role:</strong></td>
+                      <td>{{ employee.roleTypeName || 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Status:</strong></td>
+                      <td>
+                        <span class="badge" [ngClass]="employee.isActive ? 'badge-success' : 'badge-secondary'">
+                          {{ employee.isActive ? 'Active' : 'Inactive' }}
+                        </span>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div class="col-md-6">
+                  <h5><strong>Contact Information</strong></h5>
+                  <table class="table table-borderless">
+                    <tr>
+                      <td><strong>Contact Number:</strong></td>
+                      <td>{{ employee.contactNumber || 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Email:</strong></td>
+                      <td>{{ employee.email || 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Address:</strong></td>
+                      <td>{{ employee.address || 'N/A' }}</td>
+                    </tr>
+                  </table>
+
+                  <h5 class="mt-4"><strong>Employment Dates</strong></h5>
+                  <table class="table table-borderless">
+                    <tr>
+                      <td><strong>Hire Date:</strong></td>
+                      <td>{{ employee.hireDate | date }}</td>
+                    </tr>
+                    <tr *ngIf="employee.terminationDate">
+                      <td><strong>Termination Date:</strong></td>
+                      <td>{{ employee.terminationDate | date }}</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-md-12">
+                  <button mat-raised-button color="primary" (click)="editEmployee()">
+                    <mat-icon>edit</mat-icon> Edit Employee
+                  </button>
+                  <button mat-raised-button (click)="goBack()" class="ml-2">
+                    <mat-icon>arrow_back</mat-icon> Back to List
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+.w-100 {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.card-stats .card-header.card-header-icon {
+  text-align: left;
+}
+
+.card-stats .card-icon {
+  float: left;
+  margin-right: 15px;
+}

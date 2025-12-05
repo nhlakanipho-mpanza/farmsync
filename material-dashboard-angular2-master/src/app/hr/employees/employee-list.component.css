@@ -1,0 +1,23 @@
+.w-100 {
+  width: 100%;
+}
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+
+.badge-info {
+  background-color: #00bcd4;
+  color: white;
+}
+
+.badge-success {
+  background-color: #4caf50;
+  color: white;
+}
+
+.badge-secondary {
+  background-color: #9e9e9e;
+  color: white;
+}
