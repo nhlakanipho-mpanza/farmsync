@@ -23,17 +23,18 @@
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text">
-                      <i class="material-icons">person</i>
+                      <i class="material-icons">email</i>
                     </span>
                   </div>
-                  <input type="text" 
+                  <input type="email" 
                          class="form-control" 
-                         placeholder="Username"
-                         formControlName="username"
-                         [class.is-invalid]="f.username.invalid && f.username.touched">
+                         placeholder="Email"
+                         formControlName="email"
+                         [class.is-invalid]="f.email.invalid && f.email.touched">
                 </div>
-                <small class="text-danger" *ngIf="f.username.invalid && f.username.touched">
-                  Username is required
+                <small class="text-danger" *ngIf="f.email.invalid && f.email.touched">
+                  <span *ngIf="f.email.errors?.required">Email is required</span>
+                  <span *ngIf="f.email.errors?.email">Please enter a valid email</span>
                 </small>
               </div>
 

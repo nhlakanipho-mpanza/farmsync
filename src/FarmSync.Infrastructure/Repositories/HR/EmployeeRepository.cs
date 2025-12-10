@@ -11,12 +11,26 @@ public class EmployeeRepository : Repository<Employee>, IEmployeeRepository
     {
     }
 
+    public override async Task<Employee?> GetByIdAsync(Guid id)
+    {
+        return await _context.Employees
+            .Include(e => e.Position)
+            .Include(e => e.EmploymentType)
+            .Include(e => e.BiometricEnrolment)
+            .Include(e => e.BankDetails)
+                .ThenInclude(b => b!.BankName)
+            .Include(e => e.BankDetails)
+                .ThenInclude(b => b!.AccountType)
+            .Include(e => e.EmergencyContacts)
+            .Include(e => e.DriverLicenseDocument)
+            .FirstOrDefaultAsync(e => e.Id == id);
+    }
+
     public async Task<Employee?> GetByEmployeeNumberAsync(string employeeNumber)
     {
         return await _context.Employees
             .Include(e => e.Position)
             .Include(e => e.EmploymentType)
-            .Include(e => e.RoleType)
             .Include(e => e.BiometricEnrolment)
             .Include(e => e.BankDetails)
                 .ThenInclude(b => b!.BankName)
@@ -31,7 +45,6 @@ public class EmployeeRepository : Repository<Employee>, IEmployeeRepository
         return await _context.Employees
             .Include(e => e.Position)
             .Include(e => e.EmploymentType)
-            .Include(e => e.RoleType)
             .Where(e => e.IsActive)
             .OrderBy(e => e.FullName)
             .ToListAsync();
@@ -42,7 +55,6 @@ public class EmployeeRepository : Repository<Employee>, IEmployeeRepository
         return await _context.Employees
             .Include(e => e.Position)
             .Include(e => e.EmploymentType)
-            .Include(e => e.RoleType)
             .Where(e => e.PositionId == positionId)
             .OrderBy(e => e.FullName)
             .ToListAsync();
@@ -53,7 +65,6 @@ public class EmployeeRepository : Repository<Employee>, IEmployeeRepository
         return await _context.Employees
             .Include(e => e.Position)
             .Include(e => e.EmploymentType)
-            .Include(e => e.RoleType)
             .Where(e => e.EmploymentTypeId == employmentTypeId)
             .OrderBy(e => e.FullName)
             .ToListAsync();

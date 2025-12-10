@@ -100,6 +100,11 @@
                       </span>
                     </td>
                     <td class="td-actions text-right">
+                      <button mat-icon-button color="primary" 
+                              (click)="viewTask(task.id)" 
+                              matTooltip="View Details">
+                        <mat-icon>visibility</mat-icon>
+                      </button>
                       <button mat-icon-button color="accent" 
                               (click)="editTask(task.id)" 
                               matTooltip="Edit">

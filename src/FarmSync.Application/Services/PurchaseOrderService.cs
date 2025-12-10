@@ -2,6 +2,9 @@ using FarmSync.Application.DTOs.Procurement;
 using FarmSync.Application.Interfaces;
 using FarmSync.Domain.Entities.Procurement;
 using FarmSync.Domain.Interfaces;
+using FarmSync.Domain.Entities.Notifications;
+using FarmSync.Domain.Entities.Auth;
+using Microsoft.EntityFrameworkCore;
 
 namespace FarmSync.Application.Services;
 
@@ -10,17 +13,26 @@ public class PurchaseOrderService : IPurchaseOrderService
     private readonly IPurchaseOrderRepository _poRepository;
     private readonly IRepository<Supplier> _supplierRepository;
     private readonly IRepository<PurchaseOrderItem> _poItemRepository;
+    private readonly IRepository<Equipment> _equipmentRepository;
+    private readonly INotificationService _notificationService;
+    private readonly IRepository<UserRole> _userRoleRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public PurchaseOrderService(
         IPurchaseOrderRepository poRepository,
         IRepository<Supplier> supplierRepository,
         IRepository<PurchaseOrderItem> poItemRepository,
+        IRepository<Equipment> equipmentRepository,
+        INotificationService notificationService,
+        IRepository<UserRole> userRoleRepository,
         IUnitOfWork unitOfWork)
     {
         _poRepository = poRepository;
         _supplierRepository = supplierRepository;
         _poItemRepository = poItemRepository;
+        _equipmentRepository = equipmentRepository;
+        _notificationService = notificationService;
+        _userRoleRepository = userRoleRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -91,9 +103,20 @@ public class PurchaseOrderService : IPurchaseOrderService
         // Add items
         foreach (var itemDto in dto.Items)
         {
+            // Validate that either InventoryItemId or EquipmentId is provided, but not both
+            if (itemDto.InventoryItemId == null && itemDto.EquipmentId == null)
+            {
+                throw new ArgumentException("Each item must specify either InventoryItemId or EquipmentId");
+            }
+            if (itemDto.InventoryItemId != null && itemDto.EquipmentId != null)
+            {
+                throw new ArgumentException("Each item cannot have both InventoryItemId and EquipmentId");
+            }
+
             purchaseOrder.Items.Add(new PurchaseOrderItem
             {
                 InventoryItemId = itemDto.InventoryItemId,
+                EquipmentId = itemDto.EquipmentId,
                 OrderedQuantity = itemDto.OrderedQuantity,
                 UnitPrice = itemDto.UnitPrice,
                 Description = itemDto.Description,
@@ -103,6 +126,30 @@ public class PurchaseOrderService : IPurchaseOrderService
 
         await _poRepository.AddAsync(purchaseOrder);
         await _unitOfWork.SaveChangesAsync();
+
+        // Notify Accounting Managers about new PO pending approval
+        var accountingManagerRoleId = await _userRoleRepository
+            .GetAllAsync()
+            .ContinueWith(t => t.Result.FirstOrDefault(ur => ur.Role.Name == "Accounting Manager")?.RoleId);
+
+        if (accountingManagerRoleId.HasValue)
+        {
+            var accountingManagers = await _userRoleRepository
+                .GetAllAsync()
+                .ContinueWith(t => t.Result.Where(ur => ur.RoleId == accountingManagerRoleId.Value).ToList());
+
+            foreach (var manager in accountingManagers)
+            {
+                await _notificationService.SendNotificationAsync(
+                    manager.UserId,
+                    NotificationType.PurchaseOrderStatusChanged,
+                    "New Purchase Order Pending Approval",
+                    $"Purchase Order {poNumber} has been created and requires your approval.",
+                    $"/procurement/purchase-orders/{purchaseOrder.Id}",
+                    null
+                );
+            }
+        }
 
         return MapToDto(await _poRepository.GetByIdWithDetailsAsync(purchaseOrder.Id) 
             ?? throw new InvalidOperationException("Failed to retrieve created purchase order"));
@@ -141,10 +188,21 @@ public class PurchaseOrderService : IPurchaseOrderService
         var totalAmount = 0m;
         foreach (var itemDto in dto.Items)
         {
+            // Validate that either InventoryItemId or EquipmentId is provided, but not both
+            if (itemDto.InventoryItemId == null && itemDto.EquipmentId == null)
+            {
+                throw new ArgumentException("Each item must specify either InventoryItemId or EquipmentId");
+            }
+            if (itemDto.InventoryItemId != null && itemDto.EquipmentId != null)
+            {
+                throw new ArgumentException("Each item cannot have both InventoryItemId and EquipmentId");
+            }
+
             var newItem = new PurchaseOrderItem
             {
                 PurchaseOrderId = id,
                 InventoryItemId = itemDto.InventoryItemId,
+                EquipmentId = itemDto.EquipmentId,
                 OrderedQuantity = itemDto.OrderedQuantity,
                 UnitPrice = itemDto.UnitPrice,
                 Description = itemDto.Description,
@@ -184,6 +242,43 @@ public class PurchaseOrderService : IPurchaseOrderService
 
         await _poRepository.UpdateAsync(purchaseOrder);
         await _unitOfWork.SaveChangesAsync();
+
+        // Notify the PO creator
+        if (!string.IsNullOrEmpty(purchaseOrder.CreatedBy) && Guid.TryParse(purchaseOrder.CreatedBy, out var creatorId))
+        {
+            await _notificationService.SendNotificationAsync(
+                creatorId,
+                NotificationType.PurchaseOrderStatusChanged,
+                "Purchase Order Approved",
+                $"Your Purchase Order {purchaseOrder.PONumber} has been approved.",
+                $"/procurement/purchase-orders/{purchaseOrder.Id}",
+                null
+            );
+        }
+
+        // Notify Operations Clerk to update expected delivery
+        var operationsClerkRoleId = await _userRoleRepository
+            .GetAllAsync()
+            .ContinueWith(t => t.Result.FirstOrDefault(ur => ur.Role.Name == "Operations Clerk")?.RoleId);
+
+        if (operationsClerkRoleId.HasValue)
+        {
+            var operationsClerks = await _userRoleRepository
+                .GetAllAsync()
+                .ContinueWith(t => t.Result.Where(ur => ur.RoleId == operationsClerkRoleId.Value).ToList());
+
+            foreach (var clerk in operationsClerks)
+            {
+                await _notificationService.SendNotificationAsync(
+                    clerk.UserId,
+                    NotificationType.PurchaseOrderStatusChanged,
+                    "Update Expected Delivery Date",
+                    $"Purchase Order {purchaseOrder.PONumber} has been approved. Please contact the supplier and update the expected delivery date.",
+                    $"/procurement/purchase-orders/{purchaseOrder.Id}/edit",
+                    null
+                );
+            }
+        }
 
         return MapToDto(purchaseOrder);
     }
@@ -225,8 +320,10 @@ public class PurchaseOrderService : IPurchaseOrderService
                 Id = item.Id,
                 PurchaseOrderId = item.PurchaseOrderId,
                 InventoryItemId = item.InventoryItemId,
-                ItemName = item.InventoryItem?.Name ?? string.Empty,
-                ItemSKU = item.InventoryItem?.SKU ?? string.Empty,
+                EquipmentId = item.EquipmentId,
+                ItemName = item.InventoryItem?.Name ?? item.Equipment?.Name ?? string.Empty,
+                ItemSKU = item.InventoryItem?.SKU ?? item.Equipment?.SerialNumber ?? string.Empty,
+                ItemType = item.InventoryItemId.HasValue ? \"Inventory\" : \"Equipment\",
                 OrderedQuantity = item.OrderedQuantity,
                 ReceivedQuantity = item.ReceivedQuantity,
                 UnitPrice = item.UnitPrice,

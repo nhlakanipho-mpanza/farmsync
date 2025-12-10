@@ -35,6 +35,12 @@
                   Emergency Contact
                 </a>
               </li>
+              <li class="nav-item" *ngIf="isAdmin()">
+                <a class="nav-link" [class.active]="activeTab === 4" (click)="setTab(4)" style="cursor: pointer;">
+                  <i class="material-icons">security</i>
+                  Permissions
+                </a>
+              </li>
             </ul>
           </div>
         </div>
@@ -143,30 +149,16 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-md-4">
+                  <div class="col-md-12">
                     <mat-form-field class="w-100">
                       <mat-label>Address</mat-label>
-                      <input matInput placeholder="e.g., 123 Main Street" formControlName="address" required>
+                      <input matInput placeholder="e.g., 123 Main Street, Durban, 4001" formControlName="address" required>
                       <mat-error *ngIf="employeeForm.get('address').hasError('required')">
                         Address is required
                       </mat-error>
                     </mat-form-field>
                   </div>
-                  <div class="col-md-4">
-                    <mat-form-field class="w-100">
-                      <mat-label>City</mat-label>
-                      <input matInput placeholder="e.g., Ulundi" formControlName="city" required>
-                      <mat-error *ngIf="employeeForm.get('city').hasError('required')">
-                        City is required
-                      </mat-error>
-                    </mat-form-field>
-                  </div>
-                  <div class="col-md-4">
-                    <mat-form-field class="w-100">
-                      <mat-label>Postal Code</mat-label>
-                      <input matInput placeholder="e.g., 3838" formControlName="postalCode">
-                    </mat-form-field>
-                  </div>
+                
                 </div>
               </div>
             </div>
@@ -196,14 +188,10 @@
                   <div class="col-md-6">
                     <mat-form-field class="w-100">
                       <mat-label>Bank</mat-label>
-                      <mat-select formControlName="bank">
-                        <mat-option value="ABSA">ABSA</mat-option>
-                        <mat-option value="FNB">FNB</mat-option>
-                        <mat-option value="Standard Bank">Standard Bank</mat-option>
-                        <mat-option value="Nedbank">Nedbank</mat-option>
-                        <mat-option value="Capitec">Capitec</mat-option>
-                        <mat-option value="Investec">Investec</mat-option>
-                        <mat-option value="TymeBank">TymeBank</mat-option>
+                      <mat-select formControlName="bank" (selectionChange)="onBankChange($event.value)">
+                        <mat-option *ngFor="let bank of banks" [value]="bank.id">
+                          {{ bank.name }}
+                        </mat-option>
                       </mat-select>
                     </mat-form-field>
                   </div>
@@ -220,10 +208,9 @@
                     <mat-form-field class="w-100">
                       <mat-label>Account Type</mat-label>
                       <mat-select formControlName="accountType">
-                        <mat-option value="Savings">Savings Account</mat-option>
-                        <mat-option value="Cheque">Cheque/Current Account</mat-option>
-                        <mat-option value="Business">Business Account</mat-option>
-                        <mat-option value="Fixed Deposit">Fixed/Deposit Account</mat-option>
+                        <mat-option *ngFor="let type of accountTypes" [value]="type.id">
+                          {{ type.name }}
+                        </mat-option>
                       </mat-select>
                     </mat-form-field>
                   </div>
@@ -267,13 +254,30 @@
                   </div>
                   <div class="col-md-6">
                     <mat-form-field class="w-100">
-                      <mat-label>Hourly Rate (R)</mat-label>
-                      <input matInput formControlName="hourlyRate" disabled>
+                      <mat-label>System Role</mat-label>
+                      <mat-select formControlName="roleId" required>
+                        <mat-option *ngFor="let role of roles" [value]="role.id">
+                          {{ role.name }}
+                        </mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="employeeForm.get('roleId').hasError('required')">
+                        System role is required
+                      </mat-error>
                     </mat-form-field>
                   </div>
                 </div>
 
                 <div class="row">
+                  <div class="col-md-6">
+                    <mat-form-field class="w-100">
+                      <mat-label>Employment Type</mat-label>
+                      <mat-select formControlName="employmentTypeId">
+                        <mat-option *ngFor="let type of employmentTypes" [value]="type.id">
+                          {{ type.name }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
                   <div class="col-md-6">
                     <mat-form-field class="w-100">
                       <mat-label>Employee Number</mat-label>
@@ -283,6 +287,15 @@
                       </mat-error>
                     </mat-form-field>
                   </div>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <mat-form-field class="w-100">
+                      <mat-label>Hourly Rate (R)</mat-label>
+                      <input matInput formControlName="hourlyRate" disabled>
+                    </mat-form-field>
+                  </div>
                   <div class="col-md-6">
                     <mat-form-field class="w-100">
                       <mat-label>Hire Date</mat-label>
@@ -290,6 +303,41 @@
                       <mat-datepicker-toggle matSuffix [for]="hirePicker"></mat-datepicker-toggle>
                       <mat-datepicker #hirePicker></mat-datepicker>
                     </mat-form-field>
+                  </div>
+                </div>
+
+                <!-- Driver License Section (shown only for driver positions) -->
+                <div *ngIf="isDriverPosition()">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <label class="text-warning">Driver License Information (Required for this position)</label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <mat-form-field class="w-100">
+                        <mat-label>License Expiry Date</mat-label>
+                        <input matInput [matDatepicker]="licensePicker" formControlName="driverLicenseExpiryDate">
+                        <mat-datepicker-toggle matSuffix [for]="licensePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #licensePicker></mat-datepicker>
+                        <mat-error *ngIf="employeeForm.get('driverLicenseExpiryDate').hasError('required')">
+                          License expiry date is required for this position
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+                    
+                  </div>
+
+                  <!-- Driver License Document Upload -->
+                  <div class="row">
+                    <div class="col-md-12">
+                      <app-document-upload
+                        entityType="Employee"
+                        [entityId]="employeeId"
+                        [allowedTypes]="['Driver\'s License']"
+                        (uploaded)="onDocumentUploaded($event)">
+                      </app-document-upload>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -357,6 +405,55 @@
             </div>
           </div>
 
+          <!-- Permissions Tab -->
+          <div class="tab-pane" [class.active]="activeTab === 4" [class.show]="activeTab === 4" *ngIf="isAdmin()">
+            <div class="card">
+              <div class="card-header card-header-primary">
+                <h4 class="card-title">System Permissions</h4>
+                <p class="card-category">Assign specific permissions to this employee</p>
+              </div>
+              <div class="card-body">
+                <div class="alert alert-info">
+                  <strong>Note:</strong> Permissions control what actions this employee can perform in the system. 
+                  Admin users automatically have all permissions.
+                </div>
+
+                <div *ngFor="let module of getModules()" class="mb-4">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="text-primary mb-0">
+                      <i class="material-icons align-middle mr-2">folder</i>
+                      {{ module }}
+                    </h5>
+                    <div>
+                      <button mat-button type="button" (click)="selectAllInModule(module)" class="btn-sm">
+                        Select All
+                      </button>
+                      <button mat-button type="button" (click)="deselectAllInModule(module)" class="btn-sm">
+                        Clear All
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6" *ngFor="let permission of permissionModules[module]">
+                      <mat-checkbox 
+                        [(ngModel)]="permission.selected"
+                        [ngModelOptions]="{standalone: true}"
+                        (change)="togglePermission(permission)">
+                        {{ permission.label }}
+                      </mat-checkbox>
+                    </div>
+                  </div>
+                  <hr>
+                </div>
+
+                <div class="alert alert-success" *ngIf="getSelectedPermissions().length > 0">
+                  <strong>{{ getSelectedPermissions().length }} permissions selected</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <!-- Navigation Footer -->
@@ -369,7 +466,12 @@
               Next
             </button>
             <button mat-raised-button type="submit" *ngIf="isLast()" class="btn btn-primary" [disabled]="!employeeForm.valid || loading">
-              {{ isEditMode ? 'Update' : 'Submit' }}
+              <span *ngIf="loading">
+                <i class="fa fa-spinner fa-spin"></i> {{ isEditMode ? 'Updating...' : 'Submitting...' }}
+              </span>
+              <span *ngIf="!loading">
+                {{ isEditMode ? 'Update Employee' : 'Create Employee' }}
+              </span>
             </button>
           </div>
         </div>

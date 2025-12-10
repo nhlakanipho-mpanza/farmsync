@@ -1,0 +1,134 @@
+.document-list-container {
+  margin: 20px 0;
+}
+
+.no-documents {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+}
+
+.no-documents mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 10px;
+}
+
+.documents-grid {
+  display: grid;
+  gap: 15px;
+}
+
+.document-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.document-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-color: #9c27b0;
+}
+
+.document-icon {
+  flex-shrink: 0;
+}
+
+.document-icon mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+}
+
+.document-info {
+  flex-grow: 1;
+}
+
+.document-name {
+  font-weight: 500;
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.document-meta {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.document-type {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.expiry-badge {
+  margin-top: 8px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-success {
+  background-color: #e8f5e9;
+  color: #4caf50;
+}
+
+.badge-warning {
+  background-color: #fff3e0;
+  color: #ff9800;
+}
+
+.badge-danger {
+  background-color: #ffebee;
+  color: #f44336;
+}
+
+.badge-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.document-notes {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  margin-top: 8px;
+  padding: 8px;
+  background-color: #fffde7;
+  border-left: 3px solid #ffd54f;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #666;
+}
+
+.notes-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #ffa000;
+}
+
+.document-actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 5px;
+}

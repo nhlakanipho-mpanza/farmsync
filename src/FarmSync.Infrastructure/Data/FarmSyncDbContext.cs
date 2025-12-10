@@ -5,6 +5,8 @@ using FarmSync.Domain.Entities.ReferenceData;
 using FarmSync.Domain.Entities.Procurement;
 using FarmSync.Domain.Entities.HR;
 using FarmSync.Domain.Entities.Fleet;
+using FarmSync.Domain.Entities.Documents;
+using FarmSync.Domain.Entities.Notifications;
 
 namespace FarmSync.Infrastructure.Data;
 
@@ -41,6 +43,9 @@ public class FarmSyncDbContext : DbContext
     public DbSet<TransactionStatus> TransactionStatuses => Set<TransactionStatus>();
     public DbSet<EquipmentCondition> EquipmentConditions => Set<EquipmentCondition>();
     public DbSet<FarmSync.Domain.Entities.ReferenceData.MaintenanceType> MaintenanceTypes => Set<FarmSync.Domain.Entities.ReferenceData.MaintenanceType>();
+    public DbSet<FarmSync.Domain.Entities.ReferenceData.DocumentType> DocumentTypes => Set<FarmSync.Domain.Entities.ReferenceData.DocumentType>();
+    public DbSet<LeaveType> LeaveTypes => Set<LeaveType>();
+    public DbSet<FieldPhase> FieldPhases => Set<FieldPhase>();
 
     // HR - Employees
     public DbSet<Employee> Employees => Set<Employee>();
@@ -54,6 +59,11 @@ public class FarmSyncDbContext : DbContext
     public DbSet<TeamMember> TeamMembers => Set<TeamMember>();
     public DbSet<WorkArea> WorkAreas => Set<WorkArea>();
     public DbSet<WorkTask> WorkTasks => Set<WorkTask>();
+    public DbSet<TaskTemplate> TaskTemplates => Set<TaskTemplate>();
+    public DbSet<TaskChecklistItem> TaskChecklistItems => Set<TaskChecklistItem>();
+    public DbSet<TaskChecklistProgress> TaskChecklistProgress => Set<TaskChecklistProgress>();
+    public DbSet<TaskTemplateInventoryItem> TaskTemplateInventoryItems => Set<TaskTemplateInventoryItem>();
+    public DbSet<TaskInventoryAllocation> TaskInventoryAllocations => Set<TaskInventoryAllocation>();
     public DbSet<ClockEvent> ClockEvents => Set<ClockEvent>();
 
     // HR - Issuing
@@ -62,7 +72,6 @@ public class FarmSyncDbContext : DbContext
 
     // HR - Reference Data
     public DbSet<EmploymentType> EmploymentTypes => Set<EmploymentType>();
-    public DbSet<RoleType> RoleTypes => Set<RoleType>();
     public DbSet<TeamType> TeamTypes => Set<TeamType>();
     public DbSet<BankName> BankNames => Set<BankName>();
     public DbSet<AccountType> AccountTypes => Set<AccountType>();
@@ -89,6 +98,13 @@ public class FarmSyncDbContext : DbContext
     public DbSet<Domain.Entities.Fleet.MaintenanceType> FleetMaintenanceTypes => Set<Domain.Entities.Fleet.MaintenanceType>();
     public DbSet<FuelLog> FuelLogs => Set<FuelLog>();
     public DbSet<IncidentReport> IncidentReports => Set<IncidentReport>();
+
+    // Documents
+    public DbSet<Document> Documents => Set<Document>();
+
+    // Notifications
+    public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<NotificationSetting> NotificationSettings => Set<NotificationSetting>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

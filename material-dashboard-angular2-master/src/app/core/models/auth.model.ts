@@ -7,7 +7,7 @@ export interface User {
 }
 
 export interface LoginRequest {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -31,9 +31,11 @@ export interface RegisterRequest {
 
 export enum UserRole {
   Admin = 'Admin',
+  OperationsManager = 'Operations Manager',
+  AccountingManager = 'Accounting Manager',
+  OperationsClerk = 'Operations Clerk',
   Accountant = 'Accountant',
-  Operations = 'Operations',
-  HR = 'HR',
-  Manager = 'Manager',
-  StoreClerk = 'StoreClerk'
+  TeamLeader = 'Team Leader',
+  Driver = 'Driver',
+  GeneralWorker = 'General Worker'
 }

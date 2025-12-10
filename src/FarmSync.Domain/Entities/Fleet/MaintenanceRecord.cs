@@ -29,4 +29,5 @@ public class MaintenanceRecord : BaseEntity
     public virtual Vehicle Vehicle { get; set; } = null!;
     public virtual MaintenanceType MaintenanceType { get; set; } = null!;
     public virtual Employee? PerformedBy { get; set; }
+    public virtual ICollection<Documents.Document> Documents { get; set; } = new List<Documents.Document>();
 }

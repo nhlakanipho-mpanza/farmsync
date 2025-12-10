@@ -13,7 +13,6 @@ public class ReferenceDataController : ControllerBase
 {
     private readonly IRepository<Position> _positionRepository;
     private readonly IRepository<EmploymentType> _employmentTypeRepository;
-    private readonly IRepository<RoleType> _roleTypeRepository;
     private readonly IRepository<TeamType> _teamTypeRepository;
     private readonly IRepository<BankName> _bankNameRepository;
     private readonly IRepository<AccountType> _accountTypeRepository;
@@ -24,7 +23,6 @@ public class ReferenceDataController : ControllerBase
     public ReferenceDataController(
         IRepository<Position> positionRepository,
         IRepository<EmploymentType> employmentTypeRepository,
-        IRepository<RoleType> roleTypeRepository,
         IRepository<TeamType> teamTypeRepository,
         IRepository<BankName> bankNameRepository,
         IRepository<AccountType> accountTypeRepository,
@@ -34,7 +32,6 @@ public class ReferenceDataController : ControllerBase
     {
         _positionRepository = positionRepository;
         _employmentTypeRepository = employmentTypeRepository;
-        _roleTypeRepository = roleTypeRepository;
         _teamTypeRepository = teamTypeRepository;
         _bankNameRepository = bankNameRepository;
         _accountTypeRepository = accountTypeRepository;
@@ -63,19 +60,6 @@ public class ReferenceDataController : ControllerBase
     {
         var types = await _employmentTypeRepository.GetAllAsync();
         return Ok(types.Where(t => t.IsActive).Select(t => new EmploymentTypeDTO
-        {
-            Id = t.Id,
-            Name = t.Name,
-            Description = t.Description,
-            IsActive = t.IsActive
-        }));
-    }
-
-    [HttpGet("role-types")]
-    public async Task<ActionResult<IEnumerable<RoleTypeDTO>>> GetRoleTypes()
-    {
-        var types = await _roleTypeRepository.GetAllAsync();
-        return Ok(types.Where(t => t.IsActive).Select(t => new RoleTypeDTO
         {
             Id = t.Id,
             Name = t.Name,

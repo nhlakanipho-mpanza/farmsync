@@ -75,23 +75,28 @@
                         {{ team.isActive ? 'Active' : 'Inactive' }}
                       </span>
                     </td>
+
                     <td class="td-actions text-right">
-                      <button mat-icon-button color="primary" 
-                              (click)="viewTeam(team.id)" 
-                              matTooltip="View Details">
+                      <button mat-icon-button 
+                            class="btn btn-info btn-link btn-sm" 
+                            (click)="viewTeam(team.id)" 
+                            matTooltip="View Details">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button color="accent" 
-                              (click)="assignMembers(team.id)" 
-                              matTooltip="Assign Members">
+                      <button mat-icon-button 
+                            class="btn btn-info btn-link btn-sm" 
+                            (click)="assignMembers(team.id)" 
+                            matTooltip="Assign Members">
                         <mat-icon>group_add</mat-icon>
                       </button>
-                      <button mat-icon-button color="accent" 
-                              (click)="editTeam(team.id)" 
-                              matTooltip="Edit">
+                      <button mat-icon-button 
+                            class="btn btn-info btn-link btn-sm" 
+                            (click)="editTeam(team.id)" 
+                            matTooltip="Edit">
                         <mat-icon>edit</mat-icon>
                       </button>
-                      <button mat-icon-button color="warn" 
+                      <button mat-icon-button 
+                            class="btn btn-danger btn-link btn-sm" 
                               (click)="deleteTeam(team.id, team.name)" 
                               matTooltip="Delete">
                         <mat-icon>delete</mat-icon>

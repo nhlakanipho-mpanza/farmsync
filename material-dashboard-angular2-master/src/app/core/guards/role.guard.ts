@@ -27,8 +27,9 @@ export class RoleGuard implements CanActivate {
       return true;
     }
 
-    // User doesn't have required role, redirect to unauthorized page
-    this.router.navigate(['/unauthorized']);
+    // User doesn't have required role, redirect to their appropriate dashboard
+    console.warn('User does not have required roles:', requiredRoles);
+    this.router.navigate(['/dashboard']);
     return false;
   }
 }

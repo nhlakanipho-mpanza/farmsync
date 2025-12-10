@@ -45,4 +45,5 @@ public class Vehicle : BaseEntity
     public virtual ICollection<DriverAssignment> DriverAssignments { get; set; } = new List<DriverAssignment>();
     public virtual ICollection<GPSLocation> GPSLocations { get; set; } = new List<GPSLocation>();
     public virtual ICollection<SpeedingEvent> SpeedingEvents { get; set; } = new List<SpeedingEvent>();
+    public virtual ICollection<Documents.Document> Documents { get; set; } = new List<Documents.Document>();
 }

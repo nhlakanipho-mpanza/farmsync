@@ -15,13 +15,20 @@ public class EmployeeDTO
     public bool IsActive { get; set; }
     public string? ProfilePicture { get; set; }
     
+    // Driver License (for driver positions)
+    public DateOnly? DriverLicenseExpiryDate { get; set; }
+    public Guid? DriverLicenseDocumentId { get; set; }
+    
     // Foreign Keys
     public Guid PositionId { get; set; }
     public string? PositionName { get; set; }
+    public bool? PositionIsDriverPosition { get; set; }
     public Guid? EmploymentTypeId { get; set; }
     public string? EmploymentTypeName { get; set; }
-    public Guid? RoleTypeId { get; set; }
-    public string? RoleTypeName { get; set; }
+    public Guid UserId { get; set; }
+    public string? Username { get; set; }
+    public Guid RoleId { get; set; }
+    public string? RoleName { get; set; }
     
     // Related Data
     public BiometricEnrolmentDTO? BiometricEnrolment { get; set; }
@@ -38,7 +45,7 @@ public class CreateEmployeeDTO
     public string FullName { get; set; } = string.Empty;
     public string EmployeeNumber { get; set; } = string.Empty;
     public string? ContactNumber { get; set; }
-    public string? Email { get; set; }
+    public string Email { get; set; } = string.Empty; // Required for user account
     public string? Address { get; set; }
     public DateOnly? DateOfBirth { get; set; }
     public DateOnly? HireDate { get; set; }
@@ -46,8 +53,12 @@ public class CreateEmployeeDTO
     public string? Gender { get; set; }
     public Guid PositionId { get; set; }
     public Guid? EmploymentTypeId { get; set; }
-    public Guid? RoleTypeId { get; set; }
+    public Guid RoleId { get; set; } // Required - system role
     public string? ProfilePicture { get; set; }
+    
+    // Driver License (required if position is driver position)
+    public DateOnly? DriverLicenseExpiryDate { get; set; }
+    public Guid? DriverLicenseDocumentId { get; set; }
 }
 
 public class UpdateEmployeeDTO
@@ -61,7 +72,11 @@ public class UpdateEmployeeDTO
     public string? Gender { get; set; }
     public Guid PositionId { get; set; }
     public Guid? EmploymentTypeId { get; set; }
-    public Guid? RoleTypeId { get; set; }
+    public Guid RoleId { get; set; }
     public bool IsActive { get; set; }
     public string? ProfilePicture { get; set; }
+    
+    // Driver License
+    public DateOnly? DriverLicenseExpiryDate { get; set; }
+    public Guid? DriverLicenseDocumentId { get; set; }
 }

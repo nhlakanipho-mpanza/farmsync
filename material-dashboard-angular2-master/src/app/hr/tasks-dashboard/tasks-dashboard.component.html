@@ -1,0 +1,103 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-info card-header-icon">
+            <div class="card-icon">
+              <i class="material-icons">assignment</i>
+            </div>
+            <p class="card-category">Active Tasks</p>
+            <h3 class="card-title">{{activeTasks}}</h3>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <i class="material-icons">update</i> In Progress
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-danger card-header-icon">
+            <div class="card-icon">
+              <i class="material-icons">error</i>
+            </div>
+            <p class="card-category">Overdue Tasks</p>
+            <h3 class="card-title">{{overdueTasks}}</h3>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <i class="material-icons">priority_high</i> Needs Attention
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-success card-header-icon">
+            <div class="card-icon">
+              <i class="material-icons">check_circle</i>
+            </div>
+            <p class="card-category">Completed (Month)</p>
+            <h3 class="card-title">{{completedTasksMonth}}</h3>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <i class="material-icons">calendar_today</i> This Month
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-warning card-header-icon">
+            <div class="card-icon">
+              <i class="material-icons">access_time</i>
+            </div>
+            <p class="card-category">Attendance Today</p>
+            <h3 class="card-title">{{attendanceToday}}</h3>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <i class="material-icons">today</i> Present Today
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Task Management</h4>
+            <p class="card-category">Quick access to task functions</p>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4">
+                <a routerLink="/hr/tasks" class="btn btn-primary btn-block">
+                  <i class="material-icons">assignment</i>
+                  View All Tasks
+                </a>
+              </div>
+              <div class="col-md-4">
+                <a routerLink="/hr/attendance" class="btn btn-info btn-block">
+                  <i class="material-icons">access_time</i>
+                  Attendance Records
+                </a>
+              </div>
+              <div class="col-md-4">
+                <a routerLink="/hr/issuing" class="btn btn-success btn-block">
+                  <i class="material-icons">swap_horiz</i>
+                  Equipment Issuing
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

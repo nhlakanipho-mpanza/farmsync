@@ -6,7 +6,8 @@ namespace FarmSync.Domain.Entities.Procurement;
 public class PurchaseOrderItem : BaseEntity
 {
     public Guid PurchaseOrderId { get; set; }
-    public Guid InventoryItemId { get; set; }
+    public Guid? InventoryItemId { get; set; }
+    public Guid? EquipmentId { get; set; }
     public decimal OrderedQuantity { get; set; }
     public decimal UnitPrice { get; set; }
     public decimal ReceivedQuantity { get; set; }
@@ -15,6 +16,7 @@ public class PurchaseOrderItem : BaseEntity
 
     // Navigation properties
     public virtual PurchaseOrder PurchaseOrder { get; set; } = null!;
-    public virtual InventoryItem InventoryItem { get; set; } = null!;
+    public virtual InventoryItem? InventoryItem { get; set; }
+    public virtual Equipment? Equipment { get; set; }
     public virtual ICollection<GoodsReceivedItem> GoodsReceivedItems { get; set; } = new List<GoodsReceivedItem>();
 }

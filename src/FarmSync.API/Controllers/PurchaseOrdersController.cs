@@ -73,7 +73,7 @@ public class PurchaseOrdersController : ControllerBase
     }
 
     [HttpGet("pending-approvals")]
-    [Authorize(Roles = "Manager,Admin")]
+    [Authorize(Roles = "Accounting Manager,Operations Manager,Admin")]
     public async Task<IActionResult> GetPendingApprovals()
     {
         try
@@ -104,7 +104,7 @@ public class PurchaseOrdersController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Accountant,Admin")]
+    [Authorize(Roles = "Admin,Operations Manager,Accounting Manager,Accountant")]
     public async Task<IActionResult> Create([FromBody] CreatePurchaseOrderDto dto)
     {
         try
@@ -125,7 +125,7 @@ public class PurchaseOrdersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Accountant,Admin")]
+    [Authorize(Roles = "Admin,Operations Manager,Accounting Manager,Accountant")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdatePurchaseOrderDto dto)
     {
         try
@@ -156,7 +156,7 @@ public class PurchaseOrdersController : ControllerBase
     }
 
     [HttpPost("{id}/approve")]
-    [Authorize(Roles = "Manager,Admin")]
+    [Authorize(Roles = "Accounting Manager,Operations Manager,Admin")]
     public async Task<IActionResult> Approve(Guid id)
     {
         try

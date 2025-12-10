@@ -71,6 +71,21 @@ public class WorkTasksController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
     }
 
+    [HttpPost("from-template")]
+    [Authorize(Roles = "Admin,Manager")]
+    public async Task<ActionResult<WorkTaskDTO>> CreateFromTemplate([FromBody] CreateTaskFromTemplateDTO dto)
+    {
+        try
+        {
+            var task = await _taskService.CreateTaskFromTemplateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin,Manager")]
     public async Task<ActionResult<WorkTaskDTO>> Update(Guid id, [FromBody] UpdateWorkTaskDTO dto)
@@ -93,4 +108,62 @@ public class WorkTasksController : ControllerBase
         await _taskService.DeleteTaskAsync(id);
         return NoContent();
     }
+
+    // Checklist progress tracking endpoints
+    [HttpGet("{taskId}/checklist")]
+    public async Task<ActionResult<List<TaskChecklistProgressDTO>>> GetTaskChecklist(Guid taskId)
+    {
+        try
+        {
+            var checklist = await _taskService.GetTaskChecklistAsync(taskId);
+            return Ok(checklist);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpPut("{taskId}/checklist/{itemId}/complete")]
+    [Authorize(Roles = "Admin,Manager,Operations")]
+    public async Task<ActionResult<TaskChecklistProgressDTO>> MarkChecklistItemComplete(
+        Guid taskId, 
+        Guid itemId,
+        [FromBody] CompleteChecklistItemDTO dto)
+    {
+        try
+        {
+            var progress = await _taskService.MarkChecklistItemCompleteAsync(
+                taskId, 
+                itemId, 
+                dto.CompletedBy, 
+                dto.Notes);
+            return Ok(progress);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpPut("{taskId}/checklist/{itemId}/incomplete")]
+    [Authorize(Roles = "Admin,Manager")]
+    public async Task<ActionResult<TaskChecklistProgressDTO>> MarkChecklistItemIncomplete(Guid taskId, Guid itemId)
+    {
+        try
+        {
+            var progress = await _taskService.MarkChecklistItemIncompleteAsync(taskId, itemId);
+            return Ok(progress);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+}
+
+public class CompleteChecklistItemDTO
+{
+    public Guid CompletedBy { get; set; }
+    public string? Notes { get; set; }
 }

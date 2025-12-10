@@ -44,11 +44,27 @@ export class WorkTaskService {
     return this.http.post<WorkTask>(this.apiUrl, task);
   }
 
+  createFromTemplate(templateDto: any): Observable<WorkTask> {
+    return this.http.post<WorkTask>(`${this.apiUrl}/from-template`, templateDto);
+  }
+
   update(id: string, task: UpdateWorkTaskDTO): Observable<WorkTask> {
     return this.http.put<WorkTask>(`${this.apiUrl}/${id}`, task);
   }
 
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getTaskChecklist(taskId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${taskId}/checklist`);
+  }
+
+  markChecklistItemComplete(taskId: string, itemId: string, dto: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${taskId}/checklist/${itemId}/complete`, dto);
+  }
+
+  markChecklistItemIncomplete(taskId: string, itemId: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${taskId}/checklist/${itemId}/incomplete`, {});
   }
 }

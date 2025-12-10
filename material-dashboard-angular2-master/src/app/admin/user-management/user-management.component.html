@@ -1,0 +1,70 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">User Management</h4>
+            <p class="card-category">Manage system users and their access</p>
+          </div>
+          <div class="card-body">
+            <div class="row mb-3">
+              <div class="col-md-12 text-right">
+                <button mat-raised-button color="primary">
+                  <mat-icon>person_add</mat-icon>
+                  Add New User
+                </button>
+              </div>
+            </div>
+            
+            <div class="table-responsive">
+              <table class="table">
+                <thead class="text-primary">
+                  <tr>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Username</th>
+                    <th>Roles</th>
+                    <th>Status</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngIf="loading">
+                    <td colspan="6" class="text-center">Loading users...</td>
+                  </tr>
+                  <tr *ngIf="!loading && users.length === 0">
+                    <td colspan="6" class="text-center">No users found</td>
+                  </tr>
+                  <tr *ngFor="let user of users">
+                    <td>{{ user.fullName }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>
+                      <span class="badge badge-info mr-1" *ngFor="let role of user.roles">
+                        {{ role }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge" [class.badge-success]="user.isActive" [class.badge-danger]="!user.isActive">
+                        {{ user.isActive ? 'Active' : 'Inactive' }}
+                      </span>
+                    </td>
+                    <td class="text-right">
+                      <button mat-icon-button color="primary" matTooltip="Edit User">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button color="warn" matTooltip="Delete User" (click)="deleteUser(user.id)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

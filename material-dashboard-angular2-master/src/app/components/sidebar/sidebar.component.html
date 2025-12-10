@@ -8,12 +8,12 @@
 </div>
 <div class="sidebar-wrapper">
   <div class="user" *ngIf="currentUser">
-    <div class="photo">
-      <img src="/assets/img/faces/avatar.jpg" />
-    </div>
     <div class="user-info">
       <a data-toggle="collapse" href="#collapseExample" class="username">
         <span>
+          <div class="col-auto">
+                    <img src="./assets/img/faces/marc.jpg" class="rounded-circle" width="30" height="30" alt="Profile">
+                  </div>
           {{ currentUser.fullName }}
           <b class="caret"></b>
         </span>
@@ -84,11 +84,49 @@
     </ul>
   </div>
     <ul class="nav">
-        <li routerLinkActive="active" *ngFor="let menuItem of menuItems" class="{{menuItem.class}} nav-item">
-            <a class="nav-link" [routerLink]="[menuItem.path]">
-                <i class="material-icons">{{menuItem.icon}}</i>
-                <p>{{menuItem.title}}</p>
-            </a>
-        </li>
+        <ng-container *ngFor="let menuItem of menuItems">
+            <!-- Parent item with children (collapsible) -->
+            <li *ngIf="menuItem.isCollapsible" 
+                class="nav-item"
+                [class.active]="isChildActive(menuItem)"
+                [class.has-active-child]="isChildActive(menuItem)">
+                <a class="nav-link" 
+                   href="javascript:void(0)" 
+                   (click)="toggleSection(menuItem)">
+                    <i class="material-icons">{{menuItem.icon}}</i>
+                    <p>
+                        {{menuItem.title}}
+                        <b class="caret" [class.rotate-180]="menuItem.isExpanded">
+                            
+                        </b>
+                    </p>
+                </a>
+                <!-- Child items -->
+                <div class="collapse-menu" [class.show]="menuItem.isExpanded">
+                    <ul class="nav nav-children">
+                        <li *ngFor="let child of menuItem.children" 
+                            routerLinkActive="active"
+                            [routerLinkActiveOptions]="{ exact: true }"
+                            class="nav-item">
+                            <a class="nav-link" [routerLink]="[child.path]">
+                                <i class="material-icons">{{child.icon}}</i>
+                                <p>{{child.title}}</p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            
+            <!-- Single item without children -->
+            <li *ngIf="!menuItem.isCollapsible" 
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="{{menuItem.class}} nav-item">
+                <a class="nav-link" [routerLink]="[menuItem.path]">
+                    <i class="material-icons">{{menuItem.icon}}</i>
+                    <p>{{menuItem.title}}</p>
+                </a>
+            </li>
+        </ng-container>
     </ul>
 </div>

@@ -14,6 +14,7 @@ public class GoodsReceivedService : IGoodsReceivedService
     private readonly IRepository<StockLevel> _stockLevelRepository;
     private readonly IRepository<InventoryLocation> _locationRepository;
     private readonly IRepository<InventoryItem> _inventoryItemRepository;
+    private readonly IRepository<InventoryTransaction> _transactionRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public GoodsReceivedService(
@@ -23,6 +24,7 @@ public class GoodsReceivedService : IGoodsReceivedService
         IRepository<StockLevel> stockLevelRepository,
         IRepository<InventoryLocation> locationRepository,
         IRepository<InventoryItem> inventoryItemRepository,
+        IRepository<InventoryTransaction> transactionRepository,
         IUnitOfWork unitOfWork)
     {
         _grRepository = grRepository;
@@ -31,6 +33,7 @@ public class GoodsReceivedService : IGoodsReceivedService
         _stockLevelRepository = stockLevelRepository;
         _locationRepository = locationRepository;
         _inventoryItemRepository = inventoryItemRepository;
+        _transactionRepository = transactionRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -233,6 +236,7 @@ public class GoodsReceivedService : IGoodsReceivedService
             if (newTotalQuantity > 0)
             {
                 inventoryItem.AverageUnitCost = (oldValue + newPurchaseValue) / newTotalQuantity;
+                inventoryItem.CurrentStockLevel += actualReceived; // Update total stock across all locations
                 inventoryItem.UpdatedAt = DateTime.UtcNow;
                 await _inventoryItemRepository.UpdateAsync(inventoryItem);
             }
@@ -256,6 +260,24 @@ public class GoodsReceivedService : IGoodsReceivedService
                 stockLevel.UpdatedAt = DateTime.UtcNow;
                 await _stockLevelRepository.UpdateAsync(stockLevel);
             }
+
+            // Create inventory transaction for audit trail
+            var transaction = new InventoryTransaction
+            {
+                InventoryItemId = poItem.InventoryItemId,
+                LocationId = defaultLocation.Id,
+                StatusId = Guid.Parse("00000000-0000-0000-0000-000000000001"), // Approved status
+                TransactionType = "Receipt",
+                Quantity = actualReceived,
+                UnitCost = poItem.UnitPrice,
+                TotalCost = actualReceived * poItem.UnitPrice,
+                ReferenceNumber = goodsReceived.ReceiptNumber,
+                Notes = $"Goods received from PO {goodsReceived.PurchaseOrder?.PONumber ?? "Unknown"}",
+                TransactionDate = goodsReceived.ReceivedDate,
+                ApprovedBy = goodsReceived.ApprovedBy?.ToString(),
+                ApprovedAt = goodsReceived.ApprovedAt
+            };
+            await _transactionRepository.AddAsync(transaction);
         }
 
         await _unitOfWork.SaveChangesAsync();

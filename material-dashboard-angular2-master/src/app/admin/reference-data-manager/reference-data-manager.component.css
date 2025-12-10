@@ -1,0 +1,226 @@
+/* Reference Container */
+.reference-container {
+  padding: 20px 0;
+}
+.list-group-item.active {
+  background: linear-gradient(60deg, #616161, #212121) !important;
+  color: white;
+}
+
+/* Settings Navigation Sidebar */
+.side-nav {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 8px;
+  min-height: 400px;
+}
+
+.side-nav mat-list-item {
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 4px 0;
+  transition: all 0.3s ease;
+  height: 56px;
+}
+
+.side-nav mat-list-item:hover {
+  background-color: #e0e0e0;
+}
+
+.side-nav mat-list-item.active {
+  background-color: #9c27b0;
+  color: white;
+}
+
+.side-nav mat-list-item.active mat-icon {
+  color: white !important;
+}
+
+.side-nav mat-icon {
+  color: #9c27b0;
+  margin-right: 12px;
+}
+
+/* Tab Content Area */
+.tab-content-area {
+  padding-left: 20px;
+  min-height: 500px;
+}
+
+.category-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: #3c4858;
+  font-weight: 500;
+  font-size: 1.25rem;
+}
+
+.category-title mat-icon {
+  color: #9c27b0;
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+/* Reference Tabs */
+.reference-tabs {
+  margin-top: 20px;
+}
+
+.tab-panel-content {
+  padding: 20px 0;
+}
+
+/* Action Header */
+.action-header {
+  margin-bottom: 20px;
+}
+
+/* Table Styling */
+.settings-table {
+  width: 100%;
+  background: white;
+}
+
+.settings-table th {
+  background-color: #f8f9fa;
+  color: #3c4858;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settings-table td {
+  color: #3c4858;
+  padding: 12px 16px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  background-color: #f5f5f5;
+  font-size: 0.875rem;
+}
+
+.status-badge.active {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* Form Sections */
+.add-form-section {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+}
+
+.add-form-section h6 {
+  margin-bottom: 16px;
+  color: #3c4858;
+  font-weight: 500;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.form-actions button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+/* No Data Message */
+.no-data-message {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.no-data-message mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #ccc;
+  margin-bottom: 16px;
+}
+
+.no-data-message p {
+  margin: 0 0 20px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Loading Container */
+.loading-container {
+  text-align: center;
+  padding: 60px;
+  color: #999;
+}
+
+.loading-container mat-spinner {
+  margin: 0 auto 20px;
+}
+
+.loading-container p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Inline Edit Fields */
+.inline-edit {
+  width: 100%;
+  margin-top: -8px;
+}
+
+/* Table Responsive */
+.table-responsive {
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
+/* Utility Classes */
+.w-100 {
+  width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .side-nav {
+    margin-bottom: 20px;
+  }
+  
+  .tab-content-area {
+    padding-left: 0;
+  }
+  
+  .category-title {
+    font-size: 1.1rem;
+  }
+  
+  .tab-panel-content {
+    padding: 12px 0;
+  }
+}

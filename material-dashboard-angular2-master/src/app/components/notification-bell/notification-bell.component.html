@@ -1,0 +1,61 @@
+<div class="notification-bell">
+  <button mat-icon-button (click)="toggleDropdown()" class="bell-button">
+    <mat-icon [matBadge]="unreadCount" [matBadgeHidden]="unreadCount === 0" matBadgeColor="warn">
+      notifications
+    </mat-icon>
+  </button>
+
+  <div class="notification-dropdown" *ngIf="showDropdown" (clickOutside)="closeDropdown()">
+    <div class="dropdown-header">
+      <h3>Notifications</h3>
+      <button mat-icon-button (click)="closeDropdown()" class="close-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="dropdown-actions" *ngIf="unreadCount > 0">
+      <button mat-button color="primary" (click)="markAllAsRead()">
+        <mat-icon>done_all</mat-icon>
+        Mark all as read
+      </button>
+    </div>
+
+    <div class="notifications-list" *ngIf="!loading">
+      <div 
+        *ngFor="let notification of notifications.slice(0, 10)" 
+        class="notification-item"
+        [class.unread]="!notification.isRead"
+        (click)="markAsRead(notification, $event)">
+        
+        <div class="notification-icon" [style.color]="notificationService.getPriorityColor(notification.priority)">
+          <mat-icon>{{ notificationService.getTypeIcon(notification.type) }}</mat-icon>
+        </div>
+
+        <div class="notification-content">
+          <div class="notification-title">{{ notification.title }}</div>
+          <div class="notification-message">{{ notification.message }}</div>
+          <div class="notification-time">{{ notificationService.getRelativeTime(notification.createdAt) }}</div>
+        </div>
+
+        <div class="notification-status">
+          <mat-icon *ngIf="!notification.isRead" class="unread-indicator">fiber_manual_record</mat-icon>
+        </div>
+      </div>
+
+      <div *ngIf="notifications.length === 0" class="no-notifications">
+        <mat-icon>notifications_none</mat-icon>
+        <p>No notifications</p>
+      </div>
+    </div>
+
+    <div class="loading-container" *ngIf="loading">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div class="dropdown-footer" *ngIf="notifications.length > 0">
+      <button mat-button color="primary" (click)="viewAllNotifications()">
+        View All Notifications
+      </button>
+    </div>
+  </div>
+</div>

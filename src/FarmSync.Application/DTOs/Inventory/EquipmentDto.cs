@@ -8,7 +8,9 @@ public class EquipmentDto
     public string? SerialNumber { get; set; }
     public string? Model { get; set; }
     public string? Manufacturer { get; set; }
+    public Guid ConditionId { get; set; }
     public string ConditionName { get; set; } = string.Empty;
+    public Guid? LocationId { get; set; }
     public string? LocationName { get; set; }
     public DateTime? PurchaseDate { get; set; }
     public decimal? PurchasePrice { get; set; }

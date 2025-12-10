@@ -82,6 +82,10 @@ export class TaskListComponent implements OnInit {
     this.router.navigate(['/hr/tasks/edit', id]);
   }
 
+  viewTask(id: string) {
+    this.router.navigate(['/hr/tasks/detail', id]);
+  }
+
   deleteTask(id: string, name: string) {
     if (confirm(`Are you sure you want to delete task "${name}"?`)) {
       this.workTaskService.delete(id).subscribe({

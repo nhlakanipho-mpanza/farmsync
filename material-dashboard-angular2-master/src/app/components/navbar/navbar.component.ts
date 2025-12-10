@@ -115,9 +115,19 @@ export class NavbarComponent implements OnInit {
           titlee = titlee.slice( 1 );
       }
 
+      // First try exact match at parent level
       for(var item = 0; item < this.listTitles.length; item++){
           if(this.listTitles[item].path === titlee){
               return this.listTitles[item].title;
+          }
+          
+          // Check children if they exist
+          if(this.listTitles[item].children && this.listTitles[item].children.length > 0) {
+              for(var child = 0; child < this.listTitles[item].children.length; child++) {
+                  if(this.listTitles[item].children[child].path === titlee) {
+                      return this.listTitles[item].children[child].title;
+                  }
+              }
           }
       }
       return 'Dashboard';

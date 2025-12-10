@@ -52,16 +52,21 @@ public class GPSLocationRepository : Repository<GPSLocation>, IGPSLocationReposi
 
     public async Task<IEnumerable<GPSLocation>> GetActiveVehicleLocationsAsync()
     {
-        var latestLocations = await _context.GPSLocations
+        // Get all active GPS locations from the last 24 hours (extended for testing)
+        var recentLocations = await _context.GPSLocations
             .Include(g => g.Vehicle)
-                .ThenInclude(v => v.VehicleType)
-            .Include(g => g.Vehicle.VehicleStatus)
-            .Where(g => g.IsActive && g.Vehicle.IsActive)
-            .GroupBy(g => g.VehicleId)
-            .Select(g => g.OrderByDescending(l => l.Timestamp).FirstOrDefault())
-            .Where(g => g != null && g.Timestamp >= DateTime.UtcNow.AddHours(-2))
+            .Where(g => g.IsActive && 
+                        g.Vehicle.IsActive && 
+                        g.Timestamp >= DateTime.UtcNow.AddHours(-24))
+            .OrderByDescending(g => g.Timestamp)
             .ToListAsync();
 
-        return latestLocations!;
+        // Group by vehicle and get the latest location for each
+        var latestLocations = recentLocations
+            .GroupBy(g => g.VehicleId)
+            .Select(g => g.First())
+            .ToList();
+
+        return latestLocations;
     }
 }

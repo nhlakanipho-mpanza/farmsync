@@ -20,9 +20,11 @@ public class PurchaseOrderItemDto
 {
     public Guid Id { get; set; }
     public Guid PurchaseOrderId { get; set; }
-    public Guid InventoryItemId { get; set; }
+    public Guid? InventoryItemId { get; set; }
+    public Guid? EquipmentId { get; set; }
     public string ItemName { get; set; } = string.Empty;
     public string ItemSKU { get; set; } = string.Empty;
+    public string ItemType { get; set; } = string.Empty; // "Inventory" or "Equipment"
     public decimal OrderedQuantity { get; set; }
     public decimal ReceivedQuantity { get; set; }
     public decimal UnitPrice { get; set; }
@@ -41,7 +43,8 @@ public class CreatePurchaseOrderDto
 
 public class CreatePurchaseOrderItemDto
 {
-    public Guid InventoryItemId { get; set; }
+    public Guid? InventoryItemId { get; set; }
+    public Guid? EquipmentId { get; set; }
     public decimal OrderedQuantity { get; set; }
     public decimal UnitPrice { get; set; }
     public string? Description { get; set; }

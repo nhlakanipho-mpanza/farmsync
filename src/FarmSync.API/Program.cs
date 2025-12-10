@@ -15,6 +15,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add SignalR
+builder.Services.AddSignalR();
+
 // Configure Database
 builder.Services.AddDbContext<FarmSyncDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -23,6 +26,7 @@ builder.Services.AddDbContext<FarmSyncDbContext>(options =>
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRepository<FarmSync.Domain.Entities.Inventory.InventoryItem>, InventoryItemRepository>();
+builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
 builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
 builder.Services.AddScoped<IGoodsReceivedRepository, GoodsReceivedRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
@@ -35,21 +39,27 @@ builder.Services.AddScoped<FarmSync.Domain.Interfaces.HR.IClockEventRepository, 
 builder.Services.AddScoped<FarmSync.Domain.Interfaces.HR.IInventoryIssueRepository, FarmSync.Infrastructure.Repositories.HR.InventoryIssueRepository>();
 builder.Services.AddScoped<FarmSync.Domain.Interfaces.HR.IEquipmentIssueRepository, FarmSync.Infrastructure.Repositories.HR.EquipmentIssueRepository>();
 
+// Register Generic Repository
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
 // Register Services
 builder.Services.AddScoped<IInventoryItemService, InventoryItemService>();
+builder.Services.AddScoped<IEquipmentService, EquipmentService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
 builder.Services.AddScoped<IGoodsReceivedService, GoodsReceivedService>();
+builder.Services.AddScoped<ISupplierService, SupplierService>();ervice>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 
 // Register HR Services
 builder.Services.AddScoped<FarmSync.Application.Interfaces.HR.IEmployeeService, FarmSync.Application.Services.HR.EmployeeService>();
 builder.Services.AddScoped<FarmSync.Application.Interfaces.HR.ITeamService, FarmSync.Application.Services.HR.TeamService>();
 builder.Services.AddScoped<FarmSync.Application.Interfaces.HR.IWorkTaskService, FarmSync.Application.Services.HR.WorkTaskService>();
+builder.Services.AddScoped<FarmSync.Application.Interfaces.HR.ITaskTemplateService, FarmSync.Application.Services.HR.TaskTemplateService>();
 builder.Services.AddScoped<FarmSync.Application.Interfaces.HR.IAttendanceService, FarmSync.Application.Services.HR.AttendanceService>();
 builder.Services.AddScoped<FarmSync.Application.Interfaces.HR.IIssuingService, FarmSync.Application.Services.HR.IssuingService>();
+
+// Register HR Repositories
+builder.Services.AddScoped<FarmSync.Domain.Interfaces.HR.ITaskTemplateRepository, FarmSync.Infrastructure.Repositories.HR.TaskTemplateRepository>();
 
 // Register Fleet Repositories
 builder.Services.AddScoped<FarmSync.Domain.Interfaces.Fleet.IVehicleRepository, FarmSync.Infrastructure.Repositories.Fleet.VehicleRepository>();
@@ -67,6 +77,25 @@ builder.Services.AddScoped<FarmSync.Application.Interfaces.Fleet.ITripLogService
 builder.Services.AddScoped<FarmSync.Application.Interfaces.Fleet.IMaintenanceService, FarmSync.Application.Services.Fleet.MaintenanceService>();
 builder.Services.AddScoped<FarmSync.Application.Interfaces.Fleet.IFuelService, FarmSync.Application.Services.Fleet.FuelService>();
 builder.Services.AddScoped<FarmSync.Application.Interfaces.Fleet.IGPSTrackingService, FarmSync.Application.Services.Fleet.GPSTrackingService>();
+
+// Register Report Services
+builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IExportService, ExportService>();
+
+// Register Document and Notification Services
+builder.Services.AddScoped<IEmailService, FarmSync.Infrastructure.Services.EmailService>();
+builder.Services.AddScoped<IDocumentStorageService, FarmSync.Infrastructure.Services.LocalFileStorageService>();
+builder.Services.AddScoped<INotificationService>(provider =>
+{
+    var context = provider.GetRequiredService<FarmSyncDbContext>();
+    var emailService = provider.GetRequiredService<IEmailService>();
+    var logger = provider.GetRequiredService<ILogger<FarmSync.Infrastructure.Services.NotificationService>>();
+    var hubService = provider.GetRequiredService<INotificationHubService>();
+    return new FarmSync.Infrastructure.Services.NotificationService(context, emailService, logger, hubService);
+});
+
+// Register SignalR hub service
+builder.Services.AddScoped<INotificationHubService, FarmSync.API.Services.NotificationHubService>();
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -93,15 +122,14 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Configure CORS
+// Configure CORS - Allow any origin for testing notifications on multiple ports
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowAnyMethod();
     });
 });
 
@@ -112,6 +140,7 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<FarmSyncDbContext>();
     await DbSeeder.SeedAsync(context);
+    await FarmSync.API.Data.GPSDataSeeder.SeedGPSData(context);
 }
 
 // Configure the HTTP request pipeline
@@ -129,6 +158,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<FarmSync.API.Hubs.NotificationHub>("/hubs/notifications");
 
 app.Run();
 

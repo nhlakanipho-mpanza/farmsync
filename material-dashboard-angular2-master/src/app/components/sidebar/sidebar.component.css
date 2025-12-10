@@ -1,0 +1,58 @@
+/* Collapsible menu styling */
+.collapse-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+.collapse-menu.show {
+    max-height: 500px;
+}
+
+.nav-children {
+    padding-left: 15px;
+}
+
+.nav-children .nav-item .nav-link {
+    padding-left: 25px;
+    font-size: 13px;
+}
+
+.nav-children .nav-item .nav-link i {
+    font-size: 20px;
+}
+
+/* Caret rotation animation */
+.caret {
+    display: inline-block;
+    transition: transform 0.3s ease;
+    vertical-align: middle;
+}
+
+.caret.rotate-180 {
+    transform: rotate(180deg);
+}
+
+.caret i {
+    font-size: 38px;
+    vertical-align: middle;
+}
+
+/* Active parent highlighting */
+.nav-item.active > .nav-link {
+    color: #fff;
+}
+
+.nav-item.active > .nav-link i {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Parent highlight when child is active (similar to hover effect) */
+.nav-item.has-active-child > .nav-link {
+    background-color: rgba(200, 200, 200, 0.2);
+}
+
+.photo{
+    max-width: 50px;
+    border-radius: 50%;
+}

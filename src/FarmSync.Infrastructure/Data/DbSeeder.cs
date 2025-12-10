@@ -17,18 +17,28 @@ public static class DbSeeder
         {
             var roles = new[]
             {
-                new Role { Id = Guid.NewGuid(), Name = "Admin", Description = "System Administrator", IsActive = true },
-                new Role { Id = Guid.NewGuid(), Name = "Manager", Description = "Farm Manager", IsActive = true },
-                new Role { Id = Guid.NewGuid(), Name = "User", Description = "Standard User", IsActive = true }
+                new Role { Id = Guid.NewGuid(), Name = "Admin", Description = "System Administrator with full access", IsActive = true },
+                new Role { Id = Guid.NewGuid(), Name = "Operations Manager", Description = "Oversees farm operations, approves high-level transactions", IsActive = true },
+                new Role { Id = Guid.NewGuid(), Name = "Accounting Manager", Description = "Financial oversight, approves purchase orders", IsActive = true },
+                new Role { Id = Guid.NewGuid(), Name = "Operations Clerk", Description = "Receives goods, handles clock-ins, issues inventory", IsActive = true },
+                new Role { Id = Guid.NewGuid(), Name = "Accountant", Description = "View-only financial reports", IsActive = true },
+                new Role { Id = Guid.NewGuid(), Name = "Team Leader", Description = "Manages team, approves inventory for team", IsActive = true },
+                new Role { Id = Guid.NewGuid(), Name = "Driver", Description = "Fleet operations, refueling approval", IsActive = true },
+                new Role { Id = Guid.NewGuid(), Name = "General Worker", Description = "Standard employee access", IsActive = true }
             };
             await context.Roles.AddRangeAsync(roles);
             await context.SaveChangesAsync();
         }
 
-        // Seed Admin User
+        // Seed Test Users for Each Role
         if (!await context.Users.AnyAsync())
         {
-            var adminRole = await context.Roles.FirstAsync(r => r.Name == "Admin");
+            var roles = await context.Roles.ToListAsync();
+            var users = new List<User>();
+            var userRoles = new List<UserRole>();
+
+            // Admin User
+            var adminRole = roles.First(r => r.Name == "Admin");
             var adminUser = new User
             {
                 Id = Guid.NewGuid(),
@@ -39,15 +49,118 @@ public static class DbSeeder
                 LastName = "Administrator",
                 IsActive = true
             };
-            await context.Users.AddAsync(adminUser);
-            await context.SaveChangesAsync();
+            users.Add(adminUser);
+            userRoles.Add(new UserRole { Id = Guid.NewGuid(), UserId = adminUser.Id, RoleId = adminRole.Id });
 
-            await context.UserRoles.AddAsync(new UserRole
+            // Operations Manager
+            var opsManagerRole = roles.First(r => r.Name == "Operations Manager");
+            var opsManagerUser = new User
             {
                 Id = Guid.NewGuid(),
-                UserId = adminUser.Id,
-                RoleId = adminRole.Id
-            });
+                Username = "opsmanager",
+                Email = "operations.manager@farmsync.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Manager@123"),
+                FirstName = "John",
+                LastName = "Ndlovu",
+                IsActive = true
+            };
+            users.Add(opsManagerUser);
+            userRoles.Add(new UserRole { Id = Guid.NewGuid(), UserId = opsManagerUser.Id, RoleId = opsManagerRole.Id });
+
+            // Accounting Manager
+            var accManagerRole = roles.First(r => r.Name == "Accounting Manager");
+            var accManagerUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "accmanager",
+                Email = "accounting.manager@farmsync.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Manager@123"),
+                FirstName = "Sarah",
+                LastName = "Dlamini",
+                IsActive = true
+            };
+            users.Add(accManagerUser);
+            userRoles.Add(new UserRole { Id = Guid.NewGuid(), UserId = accManagerUser.Id, RoleId = accManagerRole.Id });
+
+            // Operations Clerk
+            var opsClerkRole = roles.First(r => r.Name == "Operations Clerk");
+            var opsClerkUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "opsclerk",
+                Email = "operations.clerk@farmsync.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Clerk@123"),
+                FirstName = "Thabo",
+                LastName = "Mthembu",
+                IsActive = true
+            };
+            users.Add(opsClerkUser);
+            userRoles.Add(new UserRole { Id = Guid.NewGuid(), UserId = opsClerkUser.Id, RoleId = opsClerkRole.Id });
+
+            // Accountant
+            var accountantRole = roles.First(r => r.Name == "Accountant");
+            var accountantUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "accountant",
+                Email = "accountant@farmsync.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Accountant@123"),
+                FirstName = "Nomsa",
+                LastName = "Khumalo",
+                IsActive = true
+            };
+            users.Add(accountantUser);
+            userRoles.Add(new UserRole { Id = Guid.NewGuid(), UserId = accountantUser.Id, RoleId = accountantRole.Id });
+
+            // Team Leader
+            var teamLeaderRole = roles.First(r => r.Name == "Team Leader");
+            var teamLeaderUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "teamleader",
+                Email = "team.leader@farmsync.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Leader@123"),
+                FirstName = "Sipho",
+                LastName = "Zulu",
+                IsActive = true
+            };
+            users.Add(teamLeaderUser);
+            userRoles.Add(new UserRole { Id = Guid.NewGuid(), UserId = teamLeaderUser.Id, RoleId = teamLeaderRole.Id });
+
+            // Driver
+            var driverRole = roles.First(r => r.Name == "Driver");
+            var driverUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "driver",
+                Email = "driver@farmsync.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Driver@123"),
+                FirstName = "Lucky",
+                LastName = "Mokoena",
+                IsActive = true
+            };
+            users.Add(driverUser);
+            userRoles.Add(new UserRole { Id = Guid.NewGuid(), UserId = driverUser.Id, RoleId = driverRole.Id });
+
+            // General Worker
+            var workerRole = roles.First(r => r.Name == "General Worker");
+            var workerUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "worker",
+                Email = "worker@farmsync.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Worker@123"),
+                FirstName = "Mandla",
+                LastName = "Nkosi",
+                IsActive = true
+            };
+            users.Add(workerUser);
+            userRoles.Add(new UserRole { Id = Guid.NewGuid(), UserId = workerUser.Id, RoleId = workerRole.Id });
+
+            await context.Users.AddRangeAsync(users);
+            await context.SaveChangesAsync();
+
+            await context.UserRoles.AddRangeAsync(userRoles);
             await context.SaveChangesAsync();
         }
 
@@ -133,6 +246,59 @@ public static class DbSeeder
                 new Domain.Entities.ReferenceData.MaintenanceType { Id = Guid.NewGuid(), Name = "Upgrade", Description = "Equipment upgrade or modification", IsActive = true }
             };
             await context.MaintenanceTypes.AddRangeAsync(maintenanceTypes);
+            await context.SaveChangesAsync();
+        }
+
+        // Seed Document Types
+        if (!await context.DocumentTypes.AnyAsync())
+        {
+            var documentTypes = new[]
+            {
+                new DocumentType { Id = Guid.NewGuid(), Name = "Quotation", Description = "Price quotation from supplier", IsActive = true },
+                new DocumentType { Id = Guid.NewGuid(), Name = "Invoice", Description = "Payment invoice", IsActive = true },
+                new DocumentType { Id = Guid.NewGuid(), Name = "Proof of Payment (POP)", Description = "Payment confirmation", IsActive = true },
+                new DocumentType { Id = Guid.NewGuid(), Name = "Delivery Note", Description = "Goods delivery confirmation", IsActive = true },
+                new DocumentType { Id = Guid.NewGuid(), Name = "Sick Note", Description = "Medical certificate", IsActive = true },
+                new DocumentType { Id = Guid.NewGuid(), Name = "Contract", Description = "Employment or service contract", IsActive = true },
+                new DocumentType { Id = Guid.NewGuid(), Name = "ID Document", Description = "Identification document", IsActive = true },
+                new DocumentType { Id = Guid.NewGuid(), Name = "Driver's License", Description = "Driver's license document", IsActive = true },
+                new DocumentType { Id = Guid.NewGuid(), Name = "Service Report", Description = "Maintenance service report", IsActive = true },
+                new DocumentType { Id = Guid.NewGuid(), Name = "Other", Description = "Other supporting documents", IsActive = true }
+            };
+            await context.DocumentTypes.AddRangeAsync(documentTypes);
+            await context.SaveChangesAsync();
+        }
+
+        // Seed Leave Types
+        if (!await context.LeaveTypes.AnyAsync())
+        {
+            var leaveTypes = new[]
+            {
+                new LeaveType { Id = Guid.NewGuid(), Name = "Annual Leave", Description = "Paid annual vacation leave", RequiresDocument = false, DefaultDaysPerYear = 15, IsActive = true },
+                new LeaveType { Id = Guid.NewGuid(), Name = "Sick Leave", Description = "Medical leave", RequiresDocument = true, DefaultDaysPerYear = 10, IsActive = true },
+                new LeaveType { Id = Guid.NewGuid(), Name = "Family Responsibility Leave", Description = "Leave for family matters", RequiresDocument = true, DefaultDaysPerYear = 3, IsActive = true },
+                new LeaveType { Id = Guid.NewGuid(), Name = "Unpaid Leave", Description = "Leave without pay", RequiresDocument = false, DefaultDaysPerYear = 0, IsActive = true },
+                new LeaveType { Id = Guid.NewGuid(), Name = "Study Leave", Description = "Educational purposes", RequiresDocument = true, DefaultDaysPerYear = 5, IsActive = true },
+                new LeaveType { Id = Guid.NewGuid(), Name = "Maternity Leave", Description = "Maternity leave", RequiresDocument = true, DefaultDaysPerYear = 90, IsActive = true },
+                new LeaveType { Id = Guid.NewGuid(), Name = "Paternity Leave", Description = "Paternity leave", RequiresDocument = true, DefaultDaysPerYear = 10, IsActive = true }
+            };
+            await context.LeaveTypes.AddRangeAsync(leaveTypes);
+            await context.SaveChangesAsync();
+        }
+
+        // Seed Field Phases
+        if (!await context.FieldPhases.AnyAsync())
+        {
+            var fieldPhases = new[]
+            {
+                new FieldPhase { Id = Guid.NewGuid(), Name = "Land Preparation", Description = "Preparing soil for planting", SortOrder = 1, IsActive = true },
+                new FieldPhase { Id = Guid.NewGuid(), Name = "Planting", Description = "Planting seeds or seedlings", SortOrder = 2, IsActive = true },
+                new FieldPhase { Id = Guid.NewGuid(), Name = "Growing", Description = "Crop growth and maintenance", SortOrder = 3, IsActive = true },
+                new FieldPhase { Id = Guid.NewGuid(), Name = "Harvesting", Description = "Harvesting mature crops", SortOrder = 4, IsActive = true },
+                new FieldPhase { Id = Guid.NewGuid(), Name = "Haulage", Description = "Transporting harvested crops", SortOrder = 5, IsActive = true },
+                new FieldPhase { Id = Guid.NewGuid(), Name = "Fallow", Description = "Resting period between crops", SortOrder = 6, IsActive = true }
+            };
+            await context.FieldPhases.AddRangeAsync(fieldPhases);
             await context.SaveChangesAsync();
         }
 
@@ -222,21 +388,6 @@ public static class DbSeeder
                 new EmploymentType { Id = Guid.NewGuid(), Name = "Temporary" }
             };
             await context.EmploymentTypes.AddRangeAsync(employmentTypes);
-            await context.SaveChangesAsync();
-        }
-
-        // Seed HR - Role Types
-        if (!await context.RoleTypes.AnyAsync())
-        {
-            var roleTypes = new[]
-            {
-                new RoleType { Id = Guid.NewGuid(), Name = "Worker" },
-                new RoleType { Id = Guid.NewGuid(), Name = "Supervisor" },
-                new RoleType { Id = Guid.NewGuid(), Name = "Manager" },
-                new RoleType { Id = Guid.NewGuid(), Name = "Driver" },
-                new RoleType { Id = Guid.NewGuid(), Name = "Operator" }
-            };
-            await context.RoleTypes.AddRangeAsync(roleTypes);
             await context.SaveChangesAsync();
         }
 

@@ -1,0 +1,247 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- Task Details Card -->
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Task Details</h4>
+            <p class="card-category">View and manage task information</p>
+          </div>
+          <div class="card-body" *ngIf="!loading && task">
+            <div class="row">
+              <div class="col-md-6">
+                <h5>{{ task.taskName || task.taskDescription }}</h5>
+                <p *ngIf="task.taskTemplateName" class="text-muted">
+                  <mat-icon style="vertical-align: middle; font-size: 18px;">description</mat-icon>
+                  Template: {{ task.taskTemplateName }}
+                </p>
+              </div>
+              <div class="col-md-6 text-right">
+                <button mat-raised-button color="primary" (click)="editTask()">
+                  <mat-icon>edit</mat-icon> Edit Task
+                </button>
+                <button mat-raised-button (click)="goBack()" class="ml-2">
+                  <mat-icon>arrow_back</mat-icon> Back to List
+                </button>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-4">
+                <strong>Status:</strong>
+                <span class="badge ml-2" 
+                      [ngClass]="{'badge-warning': task.taskStatusName === 'Pending',
+                                  'badge-info': task.taskStatusName === 'InProgress',
+                                  'badge-success': task.taskStatusName === 'Completed',
+                                  'badge-secondary': task.taskStatusName === 'Cancelled'}">
+                  {{ task.taskStatusName }}
+                </span>
+              </div>
+              <div class="col-md-4">
+                <strong>Scheduled Date:</strong> {{ formatDate(task.scheduledDate) }}
+              </div>
+              <div class="col-md-4">
+                <strong>Estimated Hours:</strong> {{ task.estimatedHours || 'N/A' }}
+              </div>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-md-4">
+                <strong>Work Area:</strong> {{ task.workAreaName || 'N/A' }}
+              </div>
+              <div class="col-md-4">
+                <strong>Assigned To:</strong> 
+                {{ task.teamName || task.employeeName || 'Unassigned' }}
+              </div>
+              <div class="col-md-4" *ngIf="task.actualHours">
+                <strong>Actual Hours:</strong> {{ task.actualHours }}
+              </div>
+            </div>
+
+            <div class="row mt-3" *ngIf="task.description || task.notes">
+              <div class="col-md-12">
+                <strong>Description/Notes:</strong>
+                <p style="margin-top: 5px; white-space: pre-wrap;">{{ task.description || task.notes }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body text-center" *ngIf="loading">
+            <mat-spinner style="margin: 20px auto;"></mat-spinner>
+          </div>
+        </div>
+
+        <!-- Inventory Allocations Card -->
+        <div class="card" *ngIf="!loading && task?.inventoryAllocations && task.inventoryAllocations.length > 0">
+          <div class="card-header card-header-warning">
+            <h4 class="card-title">
+              <mat-icon style="vertical-align: middle;">inventory_2</mat-icon>
+              Allocated Inventory
+            </h4>
+            <p class="card-category">
+              Materials and tools allocated for this task
+            </p>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Code</th>
+                    <th>Planned Qty</th>
+                    <th>Actual Qty</th>
+                    <th>Allocation Method</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let allocation of task.inventoryAllocations">
+                    <td>
+                      <strong>{{ allocation.inventoryItemName }}</strong>
+                      <div style="font-size: 0.85em; color: #666;" *ngIf="allocation.unitOfMeasure">
+                        Unit: {{ allocation.unitOfMeasure }}
+                      </div>
+                    </td>
+                    <td>
+                      <span class="badge badge-secondary" *ngIf="allocation.inventoryItemCode">
+                        {{ allocation.inventoryItemCode }}
+                      </span>
+                      <span *ngIf="!allocation.inventoryItemCode" class="text-muted">-</span>
+                    </td>
+                    <td>
+                      <strong>{{ allocation.plannedQuantity }}</strong>
+                      <div *ngIf="allocation.allocationMethod === 'PerTeamMember' && allocation.teamMemberCount" 
+                           style="font-size: 0.85em; color: #666;">
+                        ({{ allocation.teamMemberCount }} members)
+                      </div>
+                    </td>
+                    <td>
+                      <span *ngIf="allocation.actualQuantity !== null && allocation.actualQuantity !== undefined">
+                        {{ allocation.actualQuantity }}
+                      </span>
+                      <span *ngIf="allocation.actualQuantity === null || allocation.actualQuantity === undefined" 
+                            class="text-muted">
+                        Not issued
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge" 
+                            [ngClass]="{
+                              'badge-info': allocation.allocationMethod === 'PerTask',
+                              'badge-primary': allocation.allocationMethod === 'PerTeamMember',
+                              'badge-secondary': allocation.allocationMethod === 'Custom'
+                            }">
+                        <span *ngIf="allocation.allocationMethod === 'PerTask'">Per Task</span>
+                        <span *ngIf="allocation.allocationMethod === 'PerTeamMember'">Per Member</span>
+                        <span *ngIf="allocation.allocationMethod === 'Custom'">Custom</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge" 
+                            [ngClass]="{
+                              'badge-success': allocation.isIssued,
+                              'badge-warning': !allocation.isIssued
+                            }">
+                        {{ allocation.isIssued ? 'Issued' : 'Pending' }}
+                      </span>
+                    </td>
+                    <td>
+                      <span *ngIf="allocation.notes" style="font-size: 0.9em;">{{ allocation.notes }}</span>
+                      <span *ngIf="!allocation.notes" class="text-muted">-</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Checklist Progress Card -->
+        <div class="card" *ngIf="!loading && checklistItems.length > 0">
+          <div class="card-header card-header-info">
+            <h4 class="card-title">
+              <mat-icon style="vertical-align: middle;">checklist</mat-icon>
+              Task Checklist
+            </h4>
+            <p class="card-category">
+              {{ checklistProgress.completed }} of {{ checklistProgress.total }} items complete 
+              ({{ checklistProgress.percentage }}%)
+            </p>
+          </div>
+          <div class="card-body">
+            <!-- Progress Bar -->
+            <mat-progress-bar 
+              mode="determinate" 
+              [value]="checklistProgress.percentage"
+              color="primary"
+              style="margin-bottom: 20px;">
+            </mat-progress-bar>
+
+            <!-- Checklist Items -->
+            <div class="checklist-container">
+              <div *ngFor="let item of checklistItems" 
+                   class="checklist-item"
+                   [class.completed]="item.isCompleted">
+                
+                <div class="checklist-item-header">
+                  <mat-checkbox 
+                    [checked]="item.isCompleted"
+                    (change)="toggleChecklistItem(item)"
+                    color="primary">
+                    <strong>{{ item.sequence }}.</strong> {{ item.checklistItemDescription }}
+                    <span *ngIf="item.isRequired" class="required-badge">*</span>
+                  </mat-checkbox>
+                </div>
+
+                <div class="checklist-item-details" *ngIf="item.notes">
+                  <mat-icon class="detail-icon">info</mat-icon>
+                  <span class="text-muted">{{ item.notes }}</span>
+                </div>
+
+                <!-- Completion Info -->
+                <div class="completion-info" *ngIf="item.isCompleted">
+                  <mat-icon class="completion-icon">check_circle</mat-icon>
+                  <span>
+                    Completed by <strong>{{ item.completedByName }}</strong>
+                    on {{ formatDateTime(item.completedAt) }}
+                  </span>
+                  <div *ngIf="item.completionNotes" class="completion-notes">
+                    <mat-icon class="note-icon">note</mat-icon>
+                    {{ item.completionNotes }}
+                  </div>
+                </div>
+
+                <!-- Notes Input for Completion -->
+                <div class="completion-form" *ngIf="selectedItemForNotes === item.id">
+                  <mat-form-field class="w-100">
+                    <textarea matInput 
+                              placeholder="Completion notes (optional)" 
+                              [(ngModel)]="completionNotes"
+                              rows="2"></textarea>
+                  </mat-form-field>
+                  <div class="form-actions">
+                    <button mat-raised-button color="primary" (click)="saveChecklistCompletion(item.id)">
+                      <mat-icon>check</mat-icon> Mark Complete
+                    </button>
+                    <button mat-raised-button (click)="cancelNotes()" class="ml-2">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="checklistItems.length === 0" class="text-center text-muted" style="padding: 20px;">
+              <mat-icon style="font-size: 48px; height: 48px; width: 48px;">assignment</mat-icon>
+              <p>No checklist items for this task</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

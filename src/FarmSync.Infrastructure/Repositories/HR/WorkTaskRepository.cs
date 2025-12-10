@@ -11,6 +11,41 @@ public class WorkTaskRepository : Repository<WorkTask>, IWorkTaskRepository
     {
     }
 
+    public override async Task<IEnumerable<WorkTask>> GetAllAsync()
+    {
+        return await _context.WorkTasks
+            .Include(t => t.WorkArea)
+            .Include(t => t.Team)
+            .Include(t => t.Employee)
+            .Include(t => t.TaskStatus)
+            .Include(t => t.TaskTemplate)
+            .Include(t => t.ChecklistProgress)
+                .ThenInclude(cp => cp.TaskChecklistItem)
+            .Include(t => t.ChecklistProgress)
+                .ThenInclude(cp => cp.CompletedByEmployee)
+            .Include(t => t.InventoryAllocations)
+                .ThenInclude(ia => ia.InventoryItem)
+            .OrderByDescending(t => t.ScheduledDate)
+            .ToListAsync();
+    }
+
+    public override async Task<WorkTask?> GetByIdAsync(Guid id)
+    {
+        return await _context.WorkTasks
+            .Include(t => t.WorkArea)
+            .Include(t => t.Team)
+            .Include(t => t.Employee)
+            .Include(t => t.TaskStatus)
+            .Include(t => t.TaskTemplate)
+            .Include(t => t.ChecklistProgress)
+                .ThenInclude(cp => cp.TaskChecklistItem)
+            .Include(t => t.ChecklistProgress)
+                .ThenInclude(cp => cp.CompletedByEmployee)
+            .Include(t => t.InventoryAllocations)
+                .ThenInclude(ia => ia.InventoryItem)
+            .FirstOrDefaultAsync(t => t.Id == id);
+    }
+
     public async Task<IEnumerable<WorkTask>> GetByStatusAsync(Guid statusId)
     {
         return await _context.WorkTasks

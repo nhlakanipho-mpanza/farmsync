@@ -1,0 +1,72 @@
+<div class="document-upload-container">
+  <div class="card">
+    <div class="card-header card-header-primary">
+      <h4 class="card-title">Upload Document</h4>
+    </div>
+    <div class="card-body">
+      <!-- Drag and Drop Zone -->
+      <div 
+        class="drop-zone"
+        [class.drag-over]="dragOver"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+        (click)="fileInput.click()">
+        <mat-icon class="upload-icon">cloud_upload</mat-icon>
+        <p *ngIf="!selectedFile">Drag & drop a file here or click to browse</p>
+        <p *ngIf="selectedFile" class="selected-file">
+          <mat-icon>insert_drive_file</mat-icon>
+          {{ selectedFile.name }} ({{ getFileSizeDisplay() }})
+        </p>
+        <input 
+          #fileInput
+          type="file" 
+          hidden 
+          (change)="onFileSelected($event)">
+      </div>
+
+      <!-- Document Type Selection -->
+      <mat-form-field appearance="outline" class="full-width" style="margin-top: 20px;">
+        <mat-label>Document Type</mat-label>
+        <mat-select [(ngModel)]="selectedDocumentTypeId">
+          <mat-option *ngFor="let type of filteredDocumentTypes" [value]="type.id">
+            {{ type.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Expiry Date (Optional) -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Expiry Date (Optional)</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="expiryDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Notes (Optional) -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Notes (Optional)</mat-label>
+        <textarea matInput [(ngModel)]="notes" rows="3"></textarea>
+      </mat-form-field>
+
+      <!-- Upload Button -->
+      <div class="button-row">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          [disabled]="!selectedFile || !selectedDocumentTypeId || uploading"
+          (click)="uploadDocument()">
+          <mat-icon *ngIf="!uploading">upload</mat-icon>
+          <mat-spinner *ngIf="uploading" diameter="20" style="display: inline-block; margin-right: 10px;"></mat-spinner>
+          {{ uploading ? 'Uploading...' : 'Upload Document' }}
+        </button>
+        <button 
+          mat-button 
+          *ngIf="selectedFile"
+          (click)="resetForm()">
+          Clear
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

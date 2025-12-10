@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,12 +11,16 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { PurchaseOrderService } from '../services/purchase-order.service';
 import { SupplierService } from '../services/supplier.service';
 import { InventoryService } from '../../core/services/inventory.service';
+import { AuthService } from '../../core/services/auth.service';
 import { Supplier } from '../models/procurement.model';
 import { InventoryItem } from '../../core/models/inventory.model';
+import { DocumentUploadComponent } from '../../components/document-upload/document-upload.component';
+import { ComponentsModule } from '../../components/components.module';
 
 @Component({
   selector: 'app-purchase-order-form',
@@ -32,12 +36,15 @@ import { InventoryItem } from '../../core/models/inventory.model';
     MatNativeDateModule,
     MatButtonModule,
     MatIconModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    ComponentsModule
   ],
   templateUrl: './purchase-order-form.component.html',
   styleUrls: ['./purchase-order-form.component.scss']
 })
 export class PurchaseOrderFormComponent implements OnInit {
+  @ViewChild(DocumentUploadComponent) documentUpload!: DocumentUploadComponent;
+  
   poForm: FormGroup;
   suppliers: Supplier[] = [];
   inventoryItems: InventoryItem[] = [];
@@ -45,12 +52,14 @@ export class PurchaseOrderFormComponent implements OnInit {
   isEditMode = false;
   poId: string | null = null;
   loading = false;
+  currentUserRole: string = '';
 
   constructor(
     private fb: FormBuilder,
     private purchaseOrderService: PurchaseOrderService,
     private supplierService: SupplierService,
     private inventoryService: InventoryService,
+    private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
     private snackBar: MatSnackBar
@@ -62,6 +71,10 @@ export class PurchaseOrderFormComponent implements OnInit {
       notes: [''],
       items: this.fb.array([])
     });
+    
+    // Get current user role
+    const currentUser = this.authService.currentUserValue;
+    this.currentUserRole = currentUser?.role || '';
   }
 
   ngOnInit(): void {
@@ -109,12 +122,18 @@ export class PurchaseOrderFormComponent implements OnInit {
         });
 
         po.items.forEach((item, index) => {
-          this.items.push(this.fb.group({
+          const itemGroup = this.fb.group({
             inventoryItemId: [item.inventoryItemId, Validators.required],
             orderedQuantity: [item.orderedQuantity, [Validators.required, Validators.min(1)]],
             unitPrice: [item.unitPrice, [Validators.required, Validators.min(0)]],
+            lineTotal: [item.orderedQuantity * item.unitPrice],
             description: [item.description]
-          }));
+          });
+          
+          // Set up price calculation for loaded items
+          this.setupPriceCalculation(itemGroup);
+          
+          this.items.push(itemGroup);
           
           // Initialize filtered inventory items for each existing item
           this.filteredInventoryItems[index] = [...this.inventoryItems];
@@ -129,15 +148,52 @@ export class PurchaseOrderFormComponent implements OnInit {
 
   addItem(): void {
     const index = this.items.length;
-    this.items.push(this.fb.group({
+    const itemGroup = this.fb.group({
       inventoryItemId: ['', Validators.required],
       orderedQuantity: [1, [Validators.required, Validators.min(1)]],
       unitPrice: [0, [Validators.required, Validators.min(0)]],
+      lineTotal: [0],
       description: ['']
-    }));
+    });
+    
+    // Set up value change listeners for auto-calculation
+    this.setupPriceCalculation(itemGroup);
+    
+    this.items.push(itemGroup);
     
     // Initialize filtered inventory items for this new row
     this.filteredInventoryItems[index] = [...this.inventoryItems];
+  }
+
+  setupPriceCalculation(itemGroup: FormGroup): void {
+    // When quantity or unit price changes, update line total
+    itemGroup.get('orderedQuantity')?.valueChanges.subscribe(() => {
+      this.updateLineTotal(itemGroup);
+    });
+    
+    itemGroup.get('unitPrice')?.valueChanges.subscribe(() => {
+      this.updateLineTotal(itemGroup);
+    });
+    
+    // When line total is manually changed, calculate unit price
+    itemGroup.get('lineTotal')?.valueChanges.subscribe((total) => {
+      const quantity = itemGroup.get('orderedQuantity')?.value || 0;
+      if (quantity > 0 && total !== null && total !== undefined) {
+        const calculatedUnitPrice = total / quantity;
+        // Only update if it's different to avoid circular updates
+        const currentUnitPrice = itemGroup.get('unitPrice')?.value;
+        if (Math.abs(calculatedUnitPrice - currentUnitPrice) > 0.01) {
+          itemGroup.get('unitPrice')?.setValue(calculatedUnitPrice, { emitEvent: false });
+        }
+      }
+    });
+  }
+
+  updateLineTotal(itemGroup: FormGroup): void {
+    const quantity = itemGroup.get('orderedQuantity')?.value || 0;
+    const unitPrice = itemGroup.get('unitPrice')?.value || 0;
+    const total = quantity * unitPrice;
+    itemGroup.get('lineTotal')?.setValue(total, { emitEvent: false });
   }
 
   removeItem(index: number): void {
@@ -200,7 +256,21 @@ export class PurchaseOrderFormComponent implements OnInit {
         }
       });
     } else {
-      this.purchaseOrderService.create(formattedData).subscribe({
+      this.purchaseOrderService.create(formattedData).pipe(
+        switchMap((response: any) => {
+          console.log('Purchase order created:', response);
+          const purchaseOrderId = response.id || response.purchaseOrderId;
+          
+          // Upload documents if any files are selected
+          if (this.documentUpload && this.documentUpload.selectedFile) {
+            this.documentUpload.entityId = purchaseOrderId;
+            return this.documentUpload.uploadDocument().pipe(
+              switchMap(() => of(response))
+            );
+          }
+          return of(response);
+        })
+      ).subscribe({
         next: () => {
           this.snackBar.open('Purchase order created successfully', 'Close', { duration: 3000 });
           this.router.navigate(['/procurement/purchase-orders']);
@@ -273,5 +343,26 @@ export class PurchaseOrderFormComponent implements OnInit {
   displayItem(item: InventoryItem | null): string {
     if (!item) return '';
     return item.sku ? `${item.name} (${item.sku})` : item.name;
+  }
+
+  // Helper to check if expected delivery should be shown
+  canEditExpectedDelivery(): boolean {
+    return this.isEditMode && (
+      this.currentUserRole === 'Operations Clerk' ||
+      this.currentUserRole === 'Operations Manager' ||
+      this.currentUserRole === 'Accounting Manager' ||
+      this.currentUserRole === 'Admin'
+    );
+  }
+
+  // Get unit of measure for an item
+  getItemUnitOfMeasure(index: number): string {
+    const itemGroup = this.items.at(index) as FormGroup;
+    const inventoryItemId = itemGroup.get('inventoryItemId')?.value;
+    
+    if (!inventoryItemId) return '';
+    
+    const selectedItem = this.inventoryItems.find(item => item.id === inventoryItemId);
+    return selectedItem?.unitOfMeasureName || '';
   }
 }

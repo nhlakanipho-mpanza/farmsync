@@ -1,0 +1,139 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Purchase Orders Report</h4>
+            <p class="card-category">View and export purchase order data</p>
+          </div>
+          <div class="card-body">
+            <!-- Filters -->
+            <form [formGroup]="filterForm" class="mb-4">
+              <div class="row">
+                <div class="col-md-3">
+                  <mat-form-field class="full-width">
+                    <input matInput [matDatepicker]="startPicker" placeholder="Start Date" formControlName="startDate">
+                    <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #startPicker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-3">
+                  <mat-form-field class="full-width">
+                    <input matInput [matDatepicker]="endPicker" placeholder="End Date" formControlName="endDate">
+                    <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #endPicker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-3">
+                  <mat-form-field class="full-width">
+                    <mat-select placeholder="Status" formControlName="status">
+                      <mat-option value="">All</mat-option>
+                      <mat-option value="Created">Created</mat-option>
+                      <mat-option value="Approved">Approved</mat-option>
+                      <mat-option value="FullyReceived">Fully Received</mat-option>
+                      <mat-option value="Cancelled">Cancelled</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-3">
+                  <button mat-raised-button color="primary" (click)="loadReport()">
+                    <mat-icon>search</mat-icon> Generate Report
+                  </button>
+                  <button mat-button (click)="resetFilters()">Reset</button>
+                </div>
+              </div>
+            </form>
+
+            <!-- Loading/Error States -->
+            <div *ngIf="loading" class="text-center">
+              <mat-spinner></mat-spinner>
+            </div>
+
+            <div *ngIf="error" class="alert alert-danger">
+              {{ error }}
+            </div>
+
+            <!-- Report Summary -->
+            <div *ngIf="report && !loading" class="report-content">
+              <div class="row mb-4">
+                <div class="col-md-3">
+                  <div class="stat-card">
+                    <h3>{{ report.totalOrders }}</h3>
+                    <p>Total Orders</p>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="stat-card">
+                    <h3>R {{ report.totalAmount | number:'1.2-2' }}</h3>
+                    <p>Total Amount</p>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="stat-card">
+                    <h3>{{ report.pendingOrders }}</h3>
+                    <p>Pending</p>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="stat-card">
+                    <h3>{{ report.completedOrders }}</h3>
+                    <p>Completed</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Export Buttons -->
+              <div class="mb-3">
+                <button mat-raised-button color="accent" (click)="exportPdf()" class="mr-2">
+                  <mat-icon>picture_as_pdf</mat-icon> Export PDF
+                </button>
+                <button mat-raised-button color="accent" (click)="exportExcel()">
+                  <mat-icon>grid_on</mat-icon> Export Excel
+                </button>
+              </div>
+
+              <!-- Data Table -->
+              <div class="mat-elevation-z8">
+                <table mat-table [dataSource]="report.orders" class="full-width">
+                  
+                  <ng-container matColumnDef="poNumber">
+                    <th mat-header-cell *matHeaderCellDef> PO Number </th>
+                    <td mat-cell *matCellDef="let order"> {{ order.poNumber }} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="orderDate">
+                    <th mat-header-cell *matHeaderCellDef> Order Date </th>
+                    <td mat-cell *matCellDef="let order"> {{ order.orderDate | date }} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="supplierName">
+                    <th mat-header-cell *matHeaderCellDef> Supplier </th>
+                    <td mat-cell *matCellDef="let order"> {{ order.supplierName }} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef> Status </th>
+                    <td mat-cell *matCellDef="let order">
+                      <span class="badge" [ngClass]="'badge-' + order.status.toLowerCase()">
+                        {{ order.status }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="totalAmount">
+                    <th mat-header-cell *matHeaderCellDef> Amount </th>
+                    <td mat-cell *matCellDef="let order"> R {{ order.totalAmount | number:'1.2-2' }} </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

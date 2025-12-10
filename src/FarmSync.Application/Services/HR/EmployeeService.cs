@@ -1,8 +1,11 @@
 using FarmSync.Application.DTOs.HR;
+using FarmSync.Application.Interfaces;
 using FarmSync.Application.Interfaces.HR;
+using FarmSync.Domain.Entities.Auth;
 using FarmSync.Domain.Entities.HR;
 using FarmSync.Domain.Interfaces;
 using FarmSync.Domain.Interfaces.HR;
+using System.Text;
 
 namespace FarmSync.Application.Services.HR;
 
@@ -12,6 +15,10 @@ public class EmployeeService : IEmployeeService
     private readonly IRepository<EmergencyContact> _emergencyContactRepository;
     private readonly IRepository<BankDetails> _bankDetailsRepository;
     private readonly IRepository<BiometricEnrolment> _biometricRepository;
+    private readonly IRepository<Position> _positionRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IRepository<UserRole> _userRoleRepository;
+    private readonly IEmailService _emailService;
     private readonly IUnitOfWork _unitOfWork;
 
     public EmployeeService(
@@ -19,12 +26,20 @@ public class EmployeeService : IEmployeeService
         IRepository<EmergencyContact> emergencyContactRepository,
         IRepository<BankDetails> bankDetailsRepository,
         IRepository<BiometricEnrolment> biometricRepository,
+        IRepository<Position> positionRepository,
+        IUserRepository userRepository,
+        IRepository<UserRole> userRoleRepository,
+        IEmailService emailService,
         IUnitOfWork unitOfWork)
     {
         _employeeRepository = employeeRepository;
         _emergencyContactRepository = emergencyContactRepository;
         _bankDetailsRepository = bankDetailsRepository;
         _biometricRepository = biometricRepository;
+        _positionRepository = positionRepository;
+        _userRepository = userRepository;
+        _userRoleRepository = userRoleRepository;
+        _emailService = emailService;
         _unitOfWork = unitOfWork;
     }
 
@@ -59,6 +74,50 @@ public class EmployeeService : IEmployeeService
             throw new InvalidOperationException($"Employee number {dto.EmployeeNumber} already exists");
         }
 
+        // Check if position requires driver license
+        var position = await _positionRepository.GetByIdAsync(dto.PositionId);
+        if (position == null)
+        {
+            throw new InvalidOperationException($"Position with ID {dto.PositionId} not found");
+        }
+
+        if (position.IsDriverPosition)
+        {
+            if (!dto.DriverLicenseExpiryDate.HasValue)
+            {
+                throw new InvalidOperationException("Driver license expiry date is required for driver positions");
+            }
+        }
+
+        // Generate username and password
+        var username = GenerateUsername(dto.FullName, dto.EmployeeNumber);
+        var temporaryPassword = GenerateTemporaryPassword();
+        var passwordHash = HashPassword(temporaryPassword);
+
+        // Create user account
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = username,
+            Email = dto.Email,
+            PasswordHash = passwordHash,
+            FirstName = dto.FullName.Split(' ')[0],
+            LastName = dto.FullName.Split(' ').Length > 1 ? dto.FullName.Split(' ')[^1] : "",
+            IsActive = true
+        };
+
+        await _userRepository.AddAsync(user);
+        await _unitOfWork.SaveChangesAsync();
+
+        // Assign role to user
+        var userRole = new UserRole
+        {
+            UserId = user.Id,
+            RoleId = dto.RoleId
+        };
+        await _userRoleRepository.AddAsync(userRole);
+
+        // Create employee
         var employee = new Employee
         {
             Id = Guid.NewGuid(),
@@ -73,13 +132,26 @@ public class EmployeeService : IEmployeeService
             Gender = dto.Gender,
             PositionId = dto.PositionId,
             EmploymentTypeId = dto.EmploymentTypeId,
-            RoleTypeId = dto.RoleTypeId,
+            UserId = user.Id,
+            RoleId = dto.RoleId,
             ProfilePicture = dto.ProfilePicture,
+            DriverLicenseExpiryDate = dto.DriverLicenseExpiryDate,
+            DriverLicenseDocumentId = dto.DriverLicenseDocumentId,
             IsActive = true
         };
 
         await _employeeRepository.AddAsync(employee);
         await _unitOfWork.SaveChangesAsync();
+
+        // Send welcome email with credentials
+        try
+        {
+            await _emailService.SendWelcomeEmailAsync(dto.Email, username, temporaryPassword);
+        }
+        catch
+        {
+            // Don't fail the entire operation if email fails
+        }
 
         return MapToDto(employee);
     }
@@ -101,9 +173,11 @@ public class EmployeeService : IEmployeeService
         employee.Gender = dto.Gender;
         employee.PositionId = dto.PositionId;
         employee.EmploymentTypeId = dto.EmploymentTypeId;
-        employee.RoleTypeId = dto.RoleTypeId;
+        employee.RoleId = dto.RoleId;
         employee.IsActive = dto.IsActive;
         employee.ProfilePicture = dto.ProfilePicture;
+        employee.DriverLicenseExpiryDate = dto.DriverLicenseExpiryDate;
+        employee.DriverLicenseDocumentId = dto.DriverLicenseDocumentId;
 
         await _employeeRepository.UpdateAsync(employee);
         await _unitOfWork.SaveChangesAsync();
@@ -254,12 +328,83 @@ public class EmployeeService : IEmployeeService
             ProfilePicture = employee.ProfilePicture,
             PositionId = employee.PositionId,
             PositionName = employee.Position?.Name,
+            PositionIsDriverPosition = employee.Position?.IsDriverPosition,
             EmploymentTypeId = employee.EmploymentTypeId,
             EmploymentTypeName = employee.EmploymentType?.Name,
-            RoleTypeId = employee.RoleTypeId,
-            RoleTypeName = employee.RoleType?.Name,
+            UserId = employee.UserId,
+            RoleId = employee.RoleId,
+            DriverLicenseExpiryDate = employee.DriverLicenseExpiryDate,
+            DriverLicenseDocumentId = employee.DriverLicenseDocumentId,
+            
+            // Bank Details
+            BankDetails = employee.BankDetails != null ? new BankDetailsDTO
+            {
+                Id = employee.BankDetails.Id,
+                EmployeeId = employee.BankDetails.EmployeeId,
+                AccountHolder = employee.BankDetails.AccountHolder,
+                AccountNumber = employee.BankDetails.AccountNumber,
+                BankNameId = employee.BankDetails.BankNameId,
+                BankName = employee.BankDetails.BankName?.Name,
+                AccountTypeId = employee.BankDetails.AccountTypeId,
+                AccountType = employee.BankDetails.AccountType?.Name,
+                BranchCode = employee.BankDetails.BranchCode
+            } : null,
+            
+            // Emergency Contacts
+            EmergencyContacts = employee.EmergencyContacts?.Select(ec => new EmergencyContactDTO
+            {
+                Id = ec.Id,
+                EmployeeId = ec.EmployeeId,
+                FullName = ec.FullName,
+                ContactNumber = ec.ContactNumber,
+                Relationship = ec.Relationship,
+                AlternateNumber = ec.AlternateNumber,
+                Address = ec.Address
+            }).ToList() ?? new List<EmergencyContactDTO>(),
+            
             CreatedAt = employee.CreatedAt,
             UpdatedAt = employee.UpdatedAt
         };
+    }
+
+    private static string GenerateUsername(string fullName, string employeeNumber)
+    {
+        // Generate username from first name + last initial + employee number
+        var names = fullName.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var firstName = names[0].ToLower();
+        var lastInitial = names.Length > 1 ? names[^1][0].ToString().ToLower() : "";
+        var empNum = employeeNumber.Replace("-", "").Replace(" ", "");
+        return $"{firstName}{lastInitial}{empNum}";
+    }
+
+    private static string GenerateTemporaryPassword()
+    {
+        // Generate random 6-character password with uppercase, lowercase, and numbers
+        const string uppercase = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+        const string lowercase = "abcdefghjkmnpqrstuvwxyz";
+        const string numbers = "23456789";
+        
+        var random = new Random();
+        var password = new StringBuilder();
+        
+        // Ensure at least one of each type
+        password.Append(uppercase[random.Next(uppercase.Length)]);
+        password.Append(lowercase[random.Next(lowercase.Length)]);
+        password.Append(numbers[random.Next(numbers.Length)]);
+        
+        // Fill the rest randomly (3 more characters to make 6 total)
+        var allChars = uppercase + lowercase + numbers;
+        for (int i = 3; i < 6; i++)
+        {
+            password.Append(allChars[random.Next(allChars.Length)]);
+        }
+        
+        // Shuffle the password
+        return new string(password.ToString().OrderBy(_ => random.Next()).ToArray());
+    }
+
+    private static string HashPassword(string password)
+    {
+        return BCrypt.Net.BCrypt.HashPassword(password);
     }
 }

@@ -1,0 +1,58 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Reports Dashboard</h4>
+            <p class="card-category">Generate and view system reports</p>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-info">
+              <i class="material-icons align-middle">info</i>
+              Select a report below to generate. Reports are based on your current permissions.
+            </div>
+
+            <!-- No Reports Available -->
+            <div *ngIf="reportCategories.length === 0" class="text-center py-5">
+              <i class="material-icons" style="font-size: 64px; color: #ccc;">assessment</i>
+              <p class="text-muted mt-3">No reports available based on your permissions.</p>
+            </div>
+
+            <!-- Report Categories -->
+            <div *ngFor="let category of reportCategories" class="mb-4">
+              <div class="card">
+                <div class="card-header card-header-info">
+                  <div class="d-flex align-items-center">
+                    <i class="material-icons mr-3">{{ category.icon }}</i>
+                    <h5 class="mb-0">{{ category.title }}</h5>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6 col-lg-4 mb-3" *ngFor="let report of category.reports">
+                      <div class="card report-card" style="cursor: pointer;" (click)="generateReport(report)">
+                        <div class="card-body">
+                          <div class="d-flex align-items-start">
+                            <i class="material-icons text-primary mr-3" style="font-size: 36px;">{{ report.icon }}</i>
+                            <div class="flex-grow-1">
+                              <h6 class="mb-1">{{ report.name }}</h6>
+                              <p class="text-muted small mb-0">{{ report.description }}</p>
+                            </div>
+                            <button mat-icon-button class="ml-2" (click)="generateReport(report); $event.stopPropagation()">
+                              <i class="material-icons">play_arrow</i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

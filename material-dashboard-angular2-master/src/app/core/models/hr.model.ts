@@ -13,11 +13,17 @@ export interface Employee {
   terminationDate?: string;
   positionId: string;
   positionName?: string;
+  positionIsDriverPosition?: boolean;
   rate?: number;
   employmentTypeId?: string;
   employmentTypeName?: string;
-  roleTypeId?: string;
-  roleTypeName?: string;
+  userId: string;
+  username?: string;
+  roleId: string;
+  roleName?: string;
+  driverLicenseNumber?: string;
+  driverLicenseExpiryDate?: string;
+  driverLicenseDocumentId?: string;
   isActive: boolean;
   createdAt: string;
   updatedAt?: string;
@@ -30,12 +36,15 @@ export interface CreateEmployeeDTO {
   gender?: string;
   idNumber?: string;
   contactNumber?: string;
-  email?: string;
+  email: string;
   address?: string;
   hireDate?: string;
   positionId: string;
   employmentTypeId?: string;
-  roleTypeId?: string;
+  roleId: string;
+  driverLicenseNumber?: string;
+  driverLicenseExpiryDate?: string;
+  driverLicenseDocumentId?: string;
 }
 
 export interface UpdateEmployeeDTO {
@@ -49,8 +58,11 @@ export interface UpdateEmployeeDTO {
   terminationDate?: string;
   positionId: string;
   employmentTypeId?: string;
-  roleTypeId?: string;
+  roleId: string;
   isActive: boolean;
+  driverLicenseNumber?: string;
+  driverLicenseExpiryDate?: string;
+  driverLicenseDocumentId?: string;
 }
 
 // Emergency Contact Models

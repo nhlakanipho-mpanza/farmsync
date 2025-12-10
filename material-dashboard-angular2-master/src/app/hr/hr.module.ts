@@ -20,6 +20,10 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+
+// Shared Components
+import { ComponentsModule } from '../components/components.module';
 
 // Employee Components
 import { EmployeeListComponent } from './employees/employee-list.component';
@@ -34,6 +38,9 @@ import { AssignMembersComponent } from './teams/assign-members.component';
 // Task Components
 import { TaskListComponent } from './tasks/task-list.component';
 import { TaskFormComponent } from './tasks/task-form.component';
+import { TaskTemplateListComponent } from './tasks/task-template-list.component';
+import { TaskTemplateFormComponent } from './tasks/task-template-form.component';
+import { TaskDetailComponent } from './tasks/task-detail.component';
 
 // Attendance Components
 import { AttendanceDashboardComponent } from './attendance/attendance-dashboard.component';
@@ -56,6 +63,9 @@ import { EquipmentIssueFormComponent } from './issuing/equipment-issue-form/equi
     // Task Components
     TaskListComponent,
     TaskFormComponent,
+    TaskTemplateListComponent,
+    TaskTemplateFormComponent,
+    TaskDetailComponent,
     // Attendance Components
     AttendanceDashboardComponent,
     // Issuing Components
@@ -84,7 +94,9 @@ import { EquipmentIssueFormComponent } from './issuing/equipment-issue-form/equi
     MatSortModule,
     MatButtonToggleModule,
     MatRadioModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    DragDropModule,
+    ComponentsModule
   ]
 })
 export class HRModule { }

@@ -1,0 +1,56 @@
+<div class="document-list-container">
+  <div class="card">
+    <div class="card-header card-header-info">
+      <h4 class="card-title">Documents</h4>
+      <p class="card-category">{{ documents.length }} document(s)</p>
+    </div>
+    <div class="card-body">
+      <div *ngIf="loading" class="text-center">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+
+      <div *ngIf="!loading && documents.length === 0" class="no-documents">
+        <mat-icon>folder_open</mat-icon>
+        <p>No documents uploaded yet</p>
+      </div>
+
+      <div class="documents-grid" *ngIf="!loading && documents.length > 0">
+        <div class="document-card" *ngFor="let doc of documents">
+          <div class="document-icon" [style.color]="documentService.getFileIconColor(doc.mimeType)">
+            <mat-icon>{{ documentService.getFileIcon(doc.mimeType) }}</mat-icon>
+          </div>
+          
+          <div class="document-info">
+            <div class="document-name">{{ doc.originalFileName }}</div>
+            <div class="document-meta">
+              <span class="document-type">{{ doc.documentType }}</span>
+              <span class="document-size">{{ documentService.formatFileSize(doc.fileSize) }}</span>
+              <span class="document-date">{{ formatDate(doc.uploadedAt) }}</span>
+            </div>
+            
+            <div class="expiry-badge" *ngIf="doc.expiryDate">
+              <span class="badge" [ngClass]="getExpiryBadgeClass(doc)">
+                <mat-icon class="badge-icon">schedule</mat-icon>
+                {{ getExpiryText(doc) }}
+              </span>
+            </div>
+
+            <div class="document-notes" *ngIf="doc.notes">
+              <mat-icon class="notes-icon">note</mat-icon>
+              <span>{{ doc.notes }}</span>
+            </div>
+          </div>
+
+          <div class="document-actions">
+            <button mat-icon-button (click)="downloadDocument(doc)" matTooltip="Download">
+              <mat-icon>download</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteDocument(doc)" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

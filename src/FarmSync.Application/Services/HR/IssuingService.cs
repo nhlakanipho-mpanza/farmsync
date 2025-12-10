@@ -14,6 +14,9 @@ public class IssuingService : IIssuingService
     private readonly IRepository<InventoryItem> _inventoryItemRepository;
     private readonly IRepository<Equipment> _equipmentRepository;
     private readonly IRepository<IssueStatus> _issueStatusRepository;
+    private readonly IRepository<StockLevel> _stockLevelRepository;
+    private readonly IRepository<InventoryTransaction> _transactionRepository;
+    private readonly IRepository<InventoryLocation> _locationRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public IssuingService(
@@ -22,6 +25,9 @@ public class IssuingService : IIssuingService
         IRepository<InventoryItem> inventoryItemRepository,
         IRepository<Equipment> equipmentRepository,
         IRepository<IssueStatus> issueStatusRepository,
+        IRepository<StockLevel> stockLevelRepository,
+        IRepository<InventoryTransaction> transactionRepository,
+        IRepository<InventoryLocation> locationRepository,
         IUnitOfWork unitOfWork)
     {
         _inventoryIssueRepository = inventoryIssueRepository;
@@ -29,6 +35,9 @@ public class IssuingService : IIssuingService
         _inventoryItemRepository = inventoryItemRepository;
         _equipmentRepository = equipmentRepository;
         _issueStatusRepository = issueStatusRepository;
+        _stockLevelRepository = stockLevelRepository;
+        _transactionRepository = transactionRepository;
+        _locationRepository = locationRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -106,8 +115,50 @@ public class IssuingService : IIssuingService
                 throw new InvalidOperationException($"Insufficient stock. Available: {item.CurrentStockLevel}, Requested: {issue.Quantity}");
             }
 
+            // Update CurrentStockLevel
             item.CurrentStockLevel -= issue.Quantity;
             await _inventoryItemRepository.UpdateAsync(item);
+
+            // Update StockLevel (location-specific) - use first active location
+            var defaultLocation = (await _locationRepository.GetAllAsync()).FirstOrDefault(l => l.IsActive);
+            if (defaultLocation == null)
+            {
+                throw new InvalidOperationException("Default inventory location not found");
+            }
+
+            var stockLevel = (await _stockLevelRepository.FindAsync(sl => 
+                sl.InventoryItemId == issue.InventoryItemId && sl.LocationId == defaultLocation.Id))
+                .FirstOrDefault();
+
+            if (stockLevel != null)
+            {
+                if (stockLevel.Quantity < issue.Quantity)
+                {
+                    throw new InvalidOperationException($"Insufficient stock at location. Available: {stockLevel.Quantity}, Requested: {issue.Quantity}");
+                }
+
+                stockLevel.Quantity -= issue.Quantity;
+                stockLevel.UpdatedAt = DateTime.UtcNow;
+                await _stockLevelRepository.UpdateAsync(stockLevel);
+            }
+
+            // Create inventory transaction for audit trail
+            var transaction = new InventoryTransaction
+            {
+                InventoryItemId = issue.InventoryItemId,
+                LocationId = defaultLocation.Id,
+                StatusId = Guid.Parse("00000000-0000-0000-0000-000000000001"), // Approved status
+                TransactionType = "Issue",
+                Quantity = -issue.Quantity, // Negative for issue/outbound
+                UnitCost = item.AverageUnitCost,
+                TotalCost = issue.Quantity * item.AverageUnitCost,
+                ReferenceNumber = issue.IssueNumber,
+                Notes = $"Issued to {issue.Purpose ?? "Unknown purpose"}",
+                TransactionDate = DateTime.UtcNow.AddHours(2),
+                ApprovedBy = approvedBy,
+                ApprovedAt = DateTime.UtcNow.AddHours(2)
+            };
+            await _transactionRepository.AddAsync(transaction);
 
             // Update status to Issued
             var issuedStatus = (await _issueStatusRepository.GetAllAsync())
@@ -143,8 +194,55 @@ public class IssuingService : IIssuingService
         var item = await _inventoryItemRepository.GetByIdAsync(issue.InventoryItemId);
         if (item != null)
         {
+            // Update CurrentStockLevel
             item.CurrentStockLevel += dto.ReturnedQuantity;
             await _inventoryItemRepository.UpdateAsync(item);
+
+            // Update StockLevel (location-specific)
+            var defaultLocation = (await _locationRepository.GetAllAsync()).FirstOrDefault(l => l.IsActive);
+            if (defaultLocation != null)
+            {
+                var stockLevel = (await _stockLevelRepository.FindAsync(sl => 
+                    sl.InventoryItemId == issue.InventoryItemId && sl.LocationId == defaultLocation.Id))
+                    .FirstOrDefault();
+
+                if (stockLevel != null)
+                {
+                    stockLevel.Quantity += dto.ReturnedQuantity;
+                    stockLevel.UpdatedAt = DateTime.UtcNow;
+                    await _stockLevelRepository.UpdateAsync(stockLevel);
+                }
+                else
+                {
+                    // Create new stock level if doesn't exist
+                    stockLevel = new StockLevel
+                    {
+                        InventoryItemId = issue.InventoryItemId,
+                        LocationId = defaultLocation.Id,
+                        Quantity = dto.ReturnedQuantity,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+                    await _stockLevelRepository.AddAsync(stockLevel);
+                }
+
+                // Create inventory transaction for audit trail
+                var transaction = new InventoryTransaction
+                {
+                    InventoryItemId = issue.InventoryItemId,
+                    LocationId = defaultLocation.Id,
+                    StatusId = Guid.Parse("00000000-0000-0000-0000-000000000001"), // Approved status
+                    TransactionType = "Return",
+                    Quantity = dto.ReturnedQuantity, // Positive for return/inbound
+                    UnitCost = item.AverageUnitCost,
+                    TotalCost = dto.ReturnedQuantity * item.AverageUnitCost,
+                    ReferenceNumber = issue.IssueNumber,
+                    Notes = $"Returned from issue {issue.IssueNumber}. {dto.Notes}",
+                    TransactionDate = DateTime.UtcNow.AddHours(2),
+                    ApprovedBy = null, // Auto-approved on return
+                    ApprovedAt = DateTime.UtcNow.AddHours(2)
+                };
+                await _transactionRepository.AddAsync(transaction);
+            }
         }
 
         // Update status to Returned if fully returned

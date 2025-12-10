@@ -19,6 +19,7 @@ public class PurchaseOrder : BaseEntity
     public virtual Supplier Supplier { get; set; } = null!;
     public virtual ICollection<PurchaseOrderItem> Items { get; set; } = new List<PurchaseOrderItem>();
     public virtual ICollection<GoodsReceived> GoodsReceivedRecords { get; set; } = new List<GoodsReceived>();
+    public virtual ICollection<Documents.Document> Documents { get; set; } = new List<Documents.Document>();
 }
 
 public enum POStatus

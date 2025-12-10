@@ -1,0 +1,109 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-info card-header-icon">
+            <div class="card-icon">
+              <i class="material-icons">shopping_cart</i>
+            </div>
+            <p class="card-category">Active POs</p>
+            <h3 class="card-title">{{activePOs}}</h3>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <i class="material-icons">update</i> In Progress
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-warning card-header-icon">
+            <div class="card-icon">
+              <i class="material-icons">approval</i>
+            </div>
+            <p class="card-category">Pending Approvals</p>
+            <h3 class="card-title">{{pendingApprovals}}</h3>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <i class="material-icons">hourglass_empty</i> Awaiting Review
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-success card-header-icon">
+            <div class="card-icon">
+              <i class="material-icons">business</i>
+            </div>
+            <p class="card-category">Total Suppliers</p>
+            <h3 class="card-title">{{totalSuppliers}}</h3>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <i class="material-icons">group</i> Active Vendors
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header card-header-danger card-header-icon">
+            <div class="card-icon">
+              <i class="material-icons">payments</i>
+            </div>
+            <p class="card-category">Monthly Spend</p>
+            <h3 class="card-title">R {{monthlySpend | number}}</h3>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <i class="material-icons">calendar_today</i> This Month
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Procurement Overview</h4>
+            <p class="card-category">Quick access to procurement functions</p>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-3">
+                <a routerLink="/procurement/suppliers" class="btn btn-primary btn-block">
+                  <i class="material-icons">business</i>
+                  Manage Suppliers
+                </a>
+              </div>
+              <div class="col-md-3">
+                <a routerLink="/procurement/purchase-orders" class="btn btn-info btn-block">
+                  <i class="material-icons">shopping_cart</i>
+                  Purchase Orders
+                </a>
+              </div>
+              <div class="col-md-3">
+                <a routerLink="/procurement/receive-goods" class="btn btn-success btn-block">
+                  <i class="material-icons">local_shipping</i>
+                  Receive Goods
+                </a>
+              </div>
+              <div class="col-md-3">
+                <a routerLink="/procurement/approvals" class="btn btn-warning btn-block">
+                  <i class="material-icons">approval</i>
+                  Approvals
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

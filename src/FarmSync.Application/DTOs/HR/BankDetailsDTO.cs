@@ -4,6 +4,7 @@ public class BankDetailsDTO
 {
     public Guid Id { get; set; }
     public Guid EmployeeId { get; set; }
+    public string AccountHolder { get; set; } = string.Empty;
     public string AccountNumber { get; set; } = string.Empty;
     public Guid? BankNameId { get; set; }
     public string? BankName { get; set; }
@@ -15,6 +16,7 @@ public class BankDetailsDTO
 public class CreateBankDetailsDTO
 {
     public Guid EmployeeId { get; set; }
+    public string AccountHolder { get; set; } = string.Empty;
     public string AccountNumber { get; set; } = string.Empty;
     public Guid? BankNameId { get; set; }
     public Guid? AccountTypeId { get; set; }
@@ -23,6 +25,7 @@ public class CreateBankDetailsDTO
 
 public class UpdateBankDetailsDTO
 {
+    public string AccountHolder { get; set; } = string.Empty;
     public string AccountNumber { get; set; } = string.Empty;
     public Guid? BankNameId { get; set; }
     public Guid? AccountTypeId { get; set; }
