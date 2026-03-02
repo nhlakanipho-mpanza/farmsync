@@ -85,24 +85,21 @@
                           <div class="col-md-3">
                             <mat-form-field class="w-100" *ngIf="item.allocationMethod === 'PerTask'">
                               <mat-label>Quantity</mat-label>
-                              <input matInput type="number" 
-                                     [value]="inventoryQuantities[item.id]?.quantity || item.quantityPerUnit"
-                                     (input)="onInventoryQuantityChange(item.id, $event.target.value)"
+                              <input matInput type="number" [(ngModel)]="inventoryQuantities[item.id].quantity" [ngModelOptions]="{standalone: true}"
+                                     (ngModelChange)="onInventoryQuantityChange(item.id, inventoryQuantities[item.id].quantity)"
                                      min="0" step="0.01">
                             </mat-form-field>
                             <mat-form-field class="w-100" *ngIf="item.allocationMethod === 'PerTeamMember'">
                               <mat-label>Qty per Member</mat-label>
-                              <input matInput type="number" 
-                                     [value]="inventoryQuantities[item.id]?.quantity || item.quantityPerUnit"
-                                     (input)="onInventoryQuantityChange(item.id, $event.target.value)"
+                              <input matInput type="number" [(ngModel)]="inventoryQuantities[item.id].quantity" [ngModelOptions]="{standalone: true}"
+                                     (ngModelChange)="onInventoryQuantityChange(item.id, inventoryQuantities[item.id].quantity)"
                                      min="0" step="0.01">
                             </mat-form-field>
                             <div *ngIf="item.allocationMethod === 'Custom'">
                               <mat-form-field class="w-100">
                                 <mat-label>Quantity</mat-label>
-                                <input matInput type="number" 
-                                       [value]="inventoryQuantities[item.id]?.quantity || item.quantityPerUnit"
-                                       (input)="onInventoryQuantityChange(item.id, $event.target.value)"
+                                <input matInput type="number" [(ngModel)]="inventoryQuantities[item.id].quantity" [ngModelOptions]="{standalone: true}"
+                                       (ngModelChange)="onInventoryQuantityChange(item.id, inventoryQuantities[item.id].quantity)"
                                        min="0" step="0.01">
                               </mat-form-field>
                             </div>
@@ -110,9 +107,8 @@
                           <div class="col-md-2" *ngIf="item.allocationMethod === 'PerTeamMember'">
                             <mat-form-field class="w-100">
                               <mat-label>Team Members</mat-label>
-                              <input matInput type="number" 
-                                     [value]="inventoryQuantities[item.id]?.teamMemberCount || 1"
-                                     (input)="onTeamMemberCountChange(item.id, $event.target.value)"
+                              <input matInput type="number" [(ngModel)]="inventoryQuantities[item.id].teamMemberCount" [ngModelOptions]="{standalone: true}"
+                                     (ngModelChange)="onTeamMemberCountChange(item.id, inventoryQuantities[item.id].teamMemberCount)"
                                      min="1">
                             </mat-form-field>
                           </div>
@@ -208,13 +204,29 @@
               <div class="row">
                 <div class="col-md-12">
                   <h5>Task Assignment</h5>
-                  <mat-radio-group [(ngModel)]="assignmentType" 
-                                   [ngModelOptions]="{standalone: true}"
-                                   (change)="onAssignmentTypeChange()">
-                    <mat-radio-button value="none" class="mr-3">Unassigned</mat-radio-button>
-                    <mat-radio-button value="team" class="mr-3">Assign to Team</mat-radio-button>
-                    <mat-radio-button value="employee">Assign to Employee</mat-radio-button>
-                  </mat-radio-group>
+                  <div class="assignment-toggles-group">
+                    <div class="assignment-toggle-item">
+                      <span class="assignment-label">Unassigned</span>
+                      <mat-slide-toggle [checked]="assignmentType === 'none'" 
+                        (change)="assignmentType = 'none'; onAssignmentTypeChange()" 
+                        color="primary">
+                      </mat-slide-toggle>
+                    </div>
+                    <div class="assignment-toggle-item">
+                      <span class="assignment-label">Assign to Team</span>
+                      <mat-slide-toggle [checked]="assignmentType === 'team'" 
+                        (change)="assignmentType = 'team'; onAssignmentTypeChange()" 
+                        color="primary">
+                      </mat-slide-toggle>
+                    </div>
+                    <div class="assignment-toggle-item">
+                      <span class="assignment-label">Assign to Employee</span>
+                      <mat-slide-toggle [checked]="assignmentType === 'employee'" 
+                        (change)="assignmentType = 'employee'; onAssignmentTypeChange()" 
+                        color="primary">
+                      </mat-slide-toggle>
+                    </div>
+                  </div>
                 </div>
               </div>
 

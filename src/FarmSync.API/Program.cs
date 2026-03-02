@@ -47,7 +47,6 @@ builder.Services.AddScoped<IEquipmentService, EquipmentService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
 builder.Services.AddScoped<IGoodsReceivedService, GoodsReceivedService>();
-builder.Services.AddScoped<ISupplierService, SupplierService>();ervice>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 
 // Register HR Services

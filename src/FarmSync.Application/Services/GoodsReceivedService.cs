@@ -219,11 +219,12 @@ public class GoodsReceivedService : IGoodsReceivedService
             if (actualReceived <= 0) continue;
 
             // Get the inventory item to update weighted average cost
-            var inventoryItem = await _inventoryItemRepository.GetByIdAsync(poItem.InventoryItemId);
+            if (!poItem.InventoryItemId.HasValue) continue;
+            var inventoryItem = await _inventoryItemRepository.GetByIdAsync(poItem.InventoryItemId.Value);
             if (inventoryItem == null) continue;
 
             // Find existing stock level for this inventory item
-            var stockLevel = (await _stockLevelRepository.FindAsync(sl => sl.InventoryItemId == poItem.InventoryItemId))
+            var stockLevel = (await _stockLevelRepository.FindAsync(sl => sl.InventoryItemId == poItem.InventoryItemId.Value))
                 .FirstOrDefault();
 
             decimal oldQuantity = stockLevel?.Quantity ?? 0;
@@ -246,7 +247,7 @@ public class GoodsReceivedService : IGoodsReceivedService
                 // Create new stock level with the received quantity
                 stockLevel = new StockLevel
                 {
-                    InventoryItemId = poItem.InventoryItemId,
+                    InventoryItemId = poItem.InventoryItemId.Value,
                     LocationId = defaultLocation.Id,
                     Quantity = actualReceived,
                     UpdatedAt = DateTime.UtcNow
@@ -264,7 +265,7 @@ public class GoodsReceivedService : IGoodsReceivedService
             // Create inventory transaction for audit trail
             var transaction = new InventoryTransaction
             {
-                InventoryItemId = poItem.InventoryItemId,
+                InventoryItemId = poItem.InventoryItemId.Value,
                 LocationId = defaultLocation.Id,
                 StatusId = Guid.Parse("00000000-0000-0000-0000-000000000001"), // Approved status
                 TransactionType = "Receipt",

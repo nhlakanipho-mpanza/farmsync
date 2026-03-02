@@ -1,10 +1,10 @@
 using FarmSync.Application.DTOs.Procurement;
 using FarmSync.Application.Interfaces;
 using FarmSync.Domain.Entities.Procurement;
+using FarmSync.Domain.Entities.Inventory;
 using FarmSync.Domain.Interfaces;
 using FarmSync.Domain.Entities.Notifications;
 using FarmSync.Domain.Entities.Auth;
-using Microsoft.EntityFrameworkCore;
 
 namespace FarmSync.Application.Services;
 
@@ -323,7 +323,7 @@ public class PurchaseOrderService : IPurchaseOrderService
                 EquipmentId = item.EquipmentId,
                 ItemName = item.InventoryItem?.Name ?? item.Equipment?.Name ?? string.Empty,
                 ItemSKU = item.InventoryItem?.SKU ?? item.Equipment?.SerialNumber ?? string.Empty,
-                ItemType = item.InventoryItemId.HasValue ? \"Inventory\" : \"Equipment\",
+                ItemType = item.InventoryItemId.HasValue ? "Inventory" : "Equipment",
                 OrderedQuantity = item.OrderedQuantity,
                 ReceivedQuantity = item.ReceivedQuantity,
                 UnitPrice = item.UnitPrice,

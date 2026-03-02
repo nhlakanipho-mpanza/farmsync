@@ -74,7 +74,7 @@ export class PurchaseOrderFormComponent implements OnInit {
     
     // Get current user role
     const currentUser = this.authService.currentUserValue;
-    this.currentUserRole = currentUser?.role || '';
+    this.currentUserRole = currentUser?.roles?.[0] || '';
   }
 
   ngOnInit(): void {
